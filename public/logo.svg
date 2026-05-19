@@ -1,0 +1,15 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mark: stylized "BP" combining a level/plumb-line shape with a forward chevron -->
+  <g>
+    <!-- Outer hex frame in gold -->
+    <path d="M5 8 L20 1 L35 8 L35 32 L20 39 L5 32 Z" stroke="#F5B400" stroke-width="2" fill="#121212"/>
+    <!-- BP monogram -->
+    <path d="M13 12 L13 28 M13 12 L20 12 Q24 12 24 16 Q24 19 21 20 Q25 21 25 24 Q25 28 21 28 L13 28" stroke="#F5B400" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Small chevron indicator (the "pilot" pointing forward) -->
+    <path d="M28 17 L30 20 L28 23" stroke="#F5B400" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="46" y="26" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" fill="#F5F5F5" letter-spacing="-0.5">
+    Builder<tspan fill="#F5B400">Pilot</tspan>
+  </text>
+</svg>
