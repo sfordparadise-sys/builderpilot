@@ -8,6 +8,7 @@ import {
   BookOpen, Phone, Users, Image, Bot, Settings, LogOut, Menu, X, Map
 } from 'lucide-react';
 import { BRAND, SAMPLE_SITE } from '@/lib/constants';
+import UnitsView from '@/components/UnitsView';
 
 const NAV_ITEMS = [
   { id: 'dashboard', name: 'Dashboard', icon: Home },
@@ -171,7 +172,8 @@ export default function HomePage() {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {active === 'dashboard' && <DashboardView profile={profile} />}
-          {active !== 'dashboard' && <PlaceholderView name={NAV_ITEMS.find(n => n.id === active)?.name || ''} />}
+          {active === 'units' && <UnitsView />}
+          {active !== 'dashboard' && active !== 'units' && <PlaceholderView name={NAV_ITEMS.find(n => n.id === active)?.name || ''} />}
         </div>
       </main>
     </div>
