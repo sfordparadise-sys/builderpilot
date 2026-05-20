@@ -3,7 +3,7 @@
 > Run Your Sites. Not Just Your Day.
 > The AI Operating System for Residential Builders.
 
-Built by site supers. For site supers.
+Built by site supers.  For site supers.
 
 ---
 
