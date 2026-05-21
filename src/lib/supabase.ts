@@ -6,3 +6,6 @@ export function createSupabaseClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 }
+
+// Compatibility alias for older Aurora Trails components.
+export const createClient = createSupabaseClient;
