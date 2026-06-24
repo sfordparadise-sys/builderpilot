@@ -375,16 +375,35 @@ export default function BinPilotPage() {
 
       {/* ── Pricing ── */}
       <section id="pricing" className="py-20 bg-white/[0.02] border-y border-white/5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium px-3 py-1.5 rounded-full mb-4">
               Neighbourhood Intro Offer
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-3">Simple pricing</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">No contracts. No hidden fees. Just clean bins.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">What you get</h2>
+            <p className="text-slate-400">Every clean includes everything. No tiers, no upsells.</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-5 max-w-2xl mx-auto mb-8">
+          {/* What's included */}
+          <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-8 mb-6">
+            <ul className="space-y-4">
+              {[
+                { emoji: '💦', text: 'High-pressure hot water wash — inside and outside' },
+                { emoji: '🧴', text: 'Deodorizing treatment — smell is gone after one clean' },
+                { emoji: '🗑️', text: 'All bin types — garbage, recycling, and green bin' },
+                { emoji: '🏠', text: 'Done right at your curb — no hauling anywhere' },
+                { emoji: '📸', text: 'Before & after photo sent to you when done' },
+              ].map((item) => (
+                <li key={item.text} className="flex items-start gap-3 text-slate-300 text-sm">
+                  <span className="text-xl leading-none mt-0.5">{item.emoji}</span>
+                  <span className="leading-relaxed">{item.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Price */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
             {[
               { bins: '1 Bin', price: '$25' },
               { bins: '2 Bins', price: '$40', highlight: true },
@@ -392,38 +411,27 @@ export default function BinPilotPage() {
             ].map((p) => (
               <div
                 key={p.bins}
-                className={`relative rounded-2xl p-6 text-center ${
+                className={`rounded-2xl p-5 text-center ${
                   p.highlight
                     ? 'bg-green-500/10 border-2 border-green-500/40'
                     : 'bg-white/[0.03] border border-white/8'
                 }`}
               >
-                <span className="text-slate-400 text-sm font-medium block mb-2">{p.bins}</span>
-                <span className="text-4xl font-extrabold">{p.price}</span>
+                <span className="text-slate-400 text-xs font-medium block mb-1">{p.bins}</span>
+                <span className="text-3xl font-extrabold">{p.price}</span>
               </div>
             ))}
           </div>
 
-          <div className="max-w-2xl mx-auto">
-            <ul className="grid sm:grid-cols-2 gap-3 mb-6">
-              {[
-                'High-pressure hot wash',
-                'Inside & outside',
-                'Garbage, recycling & green bins',
-                'Done right at your curb',
-                'No hauling bins anywhere',
-                'Clean · Deodorized · Fresh',
-              ].map((f) => (
-                <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
-                  <CheckCircle size={14} className="text-green-400 flex-shrink-0" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <p className="text-center text-xs text-slate-600">
-              Multi-unit buildings — <a href="mailto:binpilotmimico@gmail.com" className="text-green-500 hover:underline">contact us for a custom quote</a>.
-            </p>
-          </div>
+          <a
+            href="#book"
+            className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-400 text-black font-bold py-4 rounded-xl transition-colors text-base"
+          >
+            Book a Clean <ArrowRight size={16} />
+          </a>
+          <p className="text-center text-xs text-slate-600 mt-4">
+            Multi-unit buildings — <a href="mailto:binpilotmimico@gmail.com" className="text-green-500 hover:underline">contact us for a quote</a>.
+          </p>
         </div>
       </section>
 
