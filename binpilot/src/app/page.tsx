@@ -437,7 +437,7 @@ export default function BinPilotPage() {
               </ul>
 
               <a
-                href="mailto:hello@binpilot.ca"
+                href="mailto:binpilotmimico@gmail.com"
                 className={`text-center font-semibold text-sm px-5 py-3 rounded-xl transition-colors ${
                   p.highlight
                     ? 'bg-green-500 hover:bg-green-400 text-black'
@@ -503,14 +503,14 @@ export default function BinPilotPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
-                href="mailto:hello@binpilot.ca"
+                href="mailto:binpilotmimico@gmail.com"
                 className="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-black font-bold px-8 py-4 rounded-xl text-base transition-colors"
               >
                 <Mail size={16} />
                 Email Us to Book
               </a>
               <a
-                href="tel:+14165550123"
+                href="tel:+15197293673"
                 className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors"
               >
                 <Phone size={16} />
@@ -544,13 +544,13 @@ export default function BinPilotPage() {
             </div>
 
             <div className="flex items-center gap-4 text-sm text-slate-500">
-              <a href="mailto:hello@binpilot.ca" className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
+              <a href="mailto:binpilotmimico@gmail.com" className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
                 <Mail size={13} />
-                hello@binpilot.ca
+                binpilotmimico@gmail.com
               </a>
-              <a href="tel:+14165550123" className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
+              <a href="tel:+15197293673" className="flex items-center gap-1.5 hover:text-slate-300 transition-colors">
                 <Phone size={13} />
-                (416) 555-0123
+                519-729-3673
               </a>
             </div>
           </div>
