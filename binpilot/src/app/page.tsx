@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useForm } from '@formspree/react';
 import {
-  Trash2, CheckCircle, MapPin, Phone, Mail, ChevronDown,
+  Trash2, CheckCircle, Phone, Mail, ChevronDown,
   Leaf, Menu, X, ArrowRight, AlertTriangle, Recycle,
-  Calendar, MessageSquare, Camera, RefreshCw, ShieldCheck,
+  Calendar, MessageSquare, Camera, ShieldCheck,
   Heart, Bug, Skull, Sparkles, Send, Star, ClipboardX, Zap,
 } from 'lucide-react';
-
 
 function nextWednesday() {
   const d = new Date();
@@ -26,7 +25,7 @@ export default function BinPilotPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [serviceDate, setServiceDate] = useState('');
   const [showNotes, setShowNotes] = useState(false);
-  const [spotsLeft] = useState(() => Math.floor(Math.random() * 3) + 2); // 2–4
+  const [spotsLeft] = useState(() => Math.floor(Math.random() * 3) + 2);
   const [form, setForm] = useState({ name: '', address: '', phone: '', email: '', bins: [] as string[], plan: 'Monthly', notes: '' });
   const [fpState, fpSubmit] = useForm('xzdlepgr');
 
@@ -45,32 +44,32 @@ export default function BinPilotPage() {
   const priceFor = (n: number) => n === 1 ? 25 : n === 2 ? 40 : n >= 3 ? 50 : 0;
 
   const threats = [
-    { icon: Skull,        label: 'E. coli & Salmonella',      desc: 'The bacteria behind food poisoning thrive in warm bin gunk. Your kids touch that lid.' },
-    { icon: Bug,          label: 'Flies, Maggots & Wasps',    desc: 'One forgotten chicken wrapper becomes a maggot nursery in 48 hours. We have seen it.' },
-    { icon: Trash2,       label: 'Raccoons & Skunks',         desc: 'A stinky bin is a dinner bell. Once they find it, they tell their friends. All of them.' },
-    { icon: Heart,        label: 'Parked Next to Your Family', desc: 'That bin sits by your garage, your dog, your kids. What\'s in it is closer than you think.' },
+    { icon: Skull,  label: 'E. coli & Salmonella',      desc: 'The bacteria behind food poisoning thrive in warm bin gunk. Your kids touch that lid.' },
+    { icon: Bug,    label: 'Flies, Maggots & Wasps',    desc: 'One forgotten chicken wrapper becomes a maggot nursery in 48 hours. We have seen it.' },
+    { icon: Trash2, label: 'Raccoons & Skunks',         desc: 'A stinky bin is a dinner bell. Once they find it, they tell their friends. All of them.' },
+    { icon: Heart,  label: 'Parked Next to Your Family', desc: 'That bin sits by your garage, your dog, your kids. What\'s in it is closer than you think.' },
   ];
 
   const testimonials = [
-    { name: 'Jennifer M.', street: 'Mimico Ave', text: 'I was embarrassed to admit how bad our green bin was. One clean and the smell was just — gone. Steve texted me a before/after photo and I actually gasped.', stars: 5 },
-    { name: 'Dave & Karen T.', street: 'Lake Shore Blvd W', text: 'We had raccoons tipping our bins every single week. Since Steve started cleaning them monthly, they haven\'t touched them once. Worth every dollar.', stars: 5 },
-    { name: 'Priya S.', street: 'New Toronto', text: 'Booked online in like two minutes. He showed up Wednesday, did all three bins while I was at work, and sent me a photo. I didn\'t have to do anything. Incredible.', stars: 5 },
+    { name: 'Jennifer M.',      street: 'Mimico Ave',        text: 'I was embarrassed to admit how bad our green bin was. One clean and the smell was just — gone. Steve texted me a before/after photo and I actually gasped.',                          stars: 5 },
+    { name: 'Dave & Karen T.', street: 'Lake Shore Blvd W', text: 'We had raccoons tipping our bins every single week. Since Steve started cleaning them monthly, they haven\'t touched them once. Worth every dollar.',                              stars: 5 },
+    { name: 'Priya S.',         street: 'New Toronto',       text: 'Booked online in like two minutes. He showed up Wednesday, did all three bins while I was at work, and sent me a photo. I didn\'t have to do anything. Incredible.', stars: 5 },
   ];
 
   const pathway = [
-    { icon: Send,        step: '1', title: 'Book in 30 Seconds',           desc: 'Pick your bins, choose monthly or one-time, drop your address. Done. We pre-fill your clean date.', color: 'text-green-400',  bg: 'bg-green-500/10 border-green-500/20' },
-    { icon: MessageSquare, step: '2', title: 'Steve Texts You Back',       desc: 'A real local neighbour confirms your spot — not a call centre, not a chatbot.', color: 'text-blue-400',   bg: 'bg-blue-500/10 border-blue-500/20' },
-    { icon: Calendar,    step: '3', title: 'Wednesday: We Come to You',    desc: 'Bins emptied Tuesday. We arrive Wednesday and hit them with a 200°F pressure wash right at your curb.', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
-    { icon: Camera,      step: '4', title: 'Before & After Photo',         desc: 'Proof on your phone. Bins back in place. You didn\'t lift a finger or a hose.', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
+    { icon: Send,          step: '1', title: 'Book in 30 Seconds',        desc: 'Pick your bins, choose monthly or one-time, drop your address. Done. We pre-fill your clean date.',            color: 'text-teal-400',   bg: 'bg-teal-500/10 border-teal-500/20' },
+    { icon: MessageSquare, step: '2', title: 'Steve Texts You Back',       desc: 'A real local neighbour confirms your spot — not a call centre, not a chatbot.',                               color: 'text-sky-400',    bg: 'bg-sky-500/10 border-sky-500/20' },
+    { icon: Calendar,      step: '3', title: 'Wednesday: We Come to You', desc: 'Bins emptied Tuesday. We arrive Wednesday and hit them with a 200°F pressure wash right at your curb.',       color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20' },
+    { icon: Camera,        step: '4', title: 'Before & After Photo',       desc: 'Proof on your phone. Bins back in place. You didn\'t lift a finger or a hose.',                               color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
   ];
 
   const faqs = [
-    { q: 'How fast can you come?',          a: `We clean every Wednesday — right after Tuesday's pickup so bins are empty and ready. Your next available date is ${serviceDate || 'this Wednesday'}. Need it faster? Text us.` },
-    { q: 'Do I need to be home?',           a: 'Not at all. Leave your bins out after Tuesday collection and we take care of everything. You get a before/after photo when it\'s done, bins back in place.' },
-    { q: 'Which bins do you clean?',        a: 'All three City of Toronto bins: garbage, blue recycling, and green organics. Pick any combo — $25 for one, $40 for two, $50 for all three.' },
-    { q: 'Is it a real sanitizing wash?',   a: 'Yes — 200°F high-pressure hot water, inside and out. Not a garden-hose rinse. Kills bacteria, mould, and odour on contact. All wastewater is captured and disposed of properly.' },
-    { q: 'What about winter?',              a: 'Year-round. Frozen organic gunk builds up worst in winter and our hot-water system powers right through the cold.' },
-    { q: 'Can I cancel the monthly plan?',  a: 'Anytime. Text us, no fees, no guilt trip, no forms to sign. We\'re neighbours — we\'re not going to hold your bin hostage.' },
+    { q: 'How fast can you come?',         a: `We clean every Wednesday — right after Tuesday's pickup so bins are empty and ready. Your next available date is ${serviceDate || 'this Wednesday'}. Need it faster? Text us.` },
+    { q: 'Do I need to be home?',          a: 'Not at all. Leave your bins out after Tuesday collection and we take care of everything. You get a before/after photo when it\'s done, bins back in place.' },
+    { q: 'Which bins do you clean?',       a: 'All three City of Toronto bins: garbage, blue recycling, and green organics. Pick any combo — $25 for one, $40 for two, $50 for all three.' },
+    { q: 'Is it a real sanitizing wash?',  a: 'Yes — 200°F high-pressure hot water, inside and out. Not a garden-hose rinse. Kills bacteria, mould, and odour on contact. All wastewater is captured and disposed of properly.' },
+    { q: 'What about winter?',             a: 'Year-round. Frozen organic gunk builds up worst in winter and our hot-water system powers right through the cold.' },
+    { q: 'Can I cancel the monthly plan?', a: 'Anytime. Text us, no fees, no guilt trip, no forms to sign. We\'re neighbours — we\'re not going to hold your bin hostage.' },
   ];
 
   function toggleBin(bin: string) {
@@ -79,38 +78,32 @@ export default function BinPilotPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await fpSubmit({
-      ...form,
-      bins: form.bins.join(', '),
-      requested_date: serviceDate,
-    });
+    await fpSubmit({ ...form, bins: form.bins.join(', '), requested_date: serviceDate });
   }
 
   const binCount = form.bins.length;
   const total = priceFor(binCount);
 
   return (
-    <div className="min-h-screen bg-[#0a0f0a] text-white">
+    <div className="min-h-screen bg-[#04080f] text-white">
 
-      {/* ── Scrolling urgency marquee ── */}
-      <div className="bg-green-500 text-black text-xs font-bold overflow-hidden py-2">
+      {/* ── Marquee ── */}
+      <div className="bg-gradient-to-r from-teal-700 via-cyan-600 to-teal-700 text-white text-xs font-bold overflow-hidden py-2">
         <div className="flex animate-marquee whitespace-nowrap">
           {[1, 2].map(k => (
-            <span key={k} className="flex items-center">
-              {MARQUEE_TEXT.repeat(4)}
-            </span>
+            <span key={k} className="flex items-center">{MARQUEE_TEXT.repeat(4)}</span>
           ))}
         </div>
       </div>
 
       {/* ── Nav ── */}
-      <header className="sticky top-0 left-0 right-0 z-50 bg-[#0a0f0a]/90 backdrop-blur-md border-b border-white/5">
+      <header className="sticky top-0 left-0 right-0 z-50 bg-[#04080f]/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
           <a href="#" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-green-500 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-teal-500 flex items-center justify-center">
               <Trash2 size={14} className="text-white" />
             </div>
-            <span className="font-bold tracking-tight">Bin<span className="text-green-400">Pilot</span></span>
+            <span className="font-bold tracking-tight">Bin<span className="text-teal-400">Pilot</span></span>
           </a>
 
           <nav className="hidden md:flex items-center gap-6 text-sm text-slate-400">
@@ -118,11 +111,11 @@ export default function BinPilotPage() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-amber-400 font-medium">
-              <span className="live-dot w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+            <div className="flex items-center gap-1.5 text-xs text-orange-400 font-medium">
+              <span className="live-dot w-1.5 h-1.5 rounded-full bg-orange-400 inline-block" />
               {spotsLeft} spots left
             </div>
-            <a href="#book" className="glow-pulse bg-green-500 hover:bg-green-400 text-black font-bold text-sm px-4 py-2 rounded-lg transition-colors">
+            <a href="#book" className="glow-pulse-orange bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-sm px-4 py-2 rounded-lg transition-all">
               Book Online
             </a>
           </div>
@@ -133,11 +126,11 @@ export default function BinPilotPage() {
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden border-t border-white/5 bg-[#0a0f0a] px-4 py-4 space-y-3">
+          <div className="md:hidden border-t border-white/5 bg-[#04080f] px-4 py-4 space-y-3">
             {navLinks.map(l => (
               <a key={l.label} href={l.href} className="block text-slate-300 hover:text-white py-1 text-sm" onClick={() => setMobileOpen(false)}>{l.label}</a>
             ))}
-            <a href="#book" className="block mt-2 bg-green-500 text-black font-bold text-sm px-4 py-2.5 rounded-lg text-center" onClick={() => setMobileOpen(false)}>
+            <a href="#book" className="block mt-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm px-4 py-2.5 rounded-lg text-center" onClick={() => setMobileOpen(false)}>
               Book Online — {spotsLeft} spots left
             </a>
           </div>
@@ -147,13 +140,14 @@ export default function BinPilotPage() {
       {/* ── Hero ── */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-20">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/8 rounded-full blur-[140px]" />
-          <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-amber-500/5 rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-teal-500/10 rounded-full blur-[160px]" />
+          <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-orange-500/8 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/4 left-1/4 w-[350px] h-[350px] bg-cyan-500/6 rounded-full blur-[110px]" />
         </div>
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center fade-in-up">
-          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-7 tracking-wide">
-            <span className="live-dot w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+          <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 text-orange-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-7 tracking-wide">
+            <span className="live-dot w-1.5 h-1.5 rounded-full bg-orange-400 inline-block" />
             ONLY {spotsLeft} SPOTS LEFT THIS WEEK &nbsp;·&nbsp; MIMICO &amp; NEW TORONTO
           </div>
 
@@ -169,7 +163,7 @@ export default function BinPilotPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-7">
-            <a href="#book" className="glow-pulse inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-black font-black px-8 py-4 rounded-xl text-lg transition-colors">
+            <a href="#book" className="glow-pulse-orange inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black px-8 py-4 rounded-xl text-lg transition-all">
               Book My Clean <ArrowRight size={18} />
             </a>
             <a href="sms:+15197293673&body=BIN CLEAN" className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold px-8 py-4 rounded-xl text-lg transition-colors">
@@ -178,45 +172,45 @@ export default function BinPilotPage() {
           </div>
 
           {serviceDate && (
-            <div className="inline-flex items-center gap-2 text-sm font-medium text-green-400 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
+            <div className="inline-flex items-center gap-2 text-sm font-medium text-teal-400 bg-teal-500/10 border border-teal-500/20 px-4 py-2 rounded-full">
               <Calendar size={14} />
               Next clean: <span className="font-bold">{serviceDate}</span> — right after Tuesday pickup
             </div>
           )}
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-slate-500">
-            <div className="flex items-center gap-1.5"><ShieldCheck size={14} className="text-green-400" /><span>200°F sanitizing wash</span></div>
-            <div className="flex items-center gap-1.5"><CheckCircle size={14} className="text-green-400" /><span>No effort on your part. Zero.</span></div>
-            <div className="flex items-center gap-1.5"><Heart size={14} className="text-green-400" /><span>Local family — Steve lives here</span></div>
+            <div className="flex items-center gap-1.5"><ShieldCheck size={14} className="text-teal-400" /><span>200°F sanitizing wash</span></div>
+            <div className="flex items-center gap-1.5"><CheckCircle size={14} className="text-teal-400" /><span>No effort on your part. Zero.</span></div>
+            <div className="flex items-center gap-1.5"><Heart size={14} className="text-teal-400" /><span>Local family — Steve lives here</span></div>
           </div>
         </div>
       </section>
 
-      {/* ── Raccoon Inspection Failed card ── */}
+      {/* ── Raccoon Inspection Failed ── */}
       <section className="py-6 max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="bg-amber-950/40 border-2 border-amber-500/40 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
+        <div className="bg-orange-950/40 border-2 border-orange-500/40 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
           <div className="flex-shrink-0">
-            <div className="w-14 h-14 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
-              <ClipboardX size={28} className="text-amber-400" />
+            <div className="w-14 h-14 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center">
+              <ClipboardX size={28} className="text-orange-400" />
             </div>
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded tracking-widest">⚠ RACCOON INSPECTION FAILED</span>
             </div>
-            <h3 className="font-black text-xl text-amber-300 mb-1">Property Address: <span className="text-white">Yours</span></h3>
-            <p className="text-amber-200/70 text-sm mb-3">Reason for failure: suspicious smell · excessive grime · fly traffic exceeds safe limits · green bin classified as biohazard</p>
+            <h3 className="font-black text-xl text-orange-300 mb-1">Property Address: <span className="text-white">Yours</span></h3>
+            <p className="text-orange-200/70 text-sm mb-3">Reason for failure: suspicious smell · excessive grime · fly traffic exceeds safe limits · green bin classified as biohazard</p>
             <div className="flex flex-wrap gap-3 text-sm">
-              <span className="bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-lg font-semibold">✓ A cleaner neighbourhood</span>
-              <span className="bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-lg font-semibold">✓ A happier you</span>
-              <span className="bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-lg font-semibold">✓ Less raccoon activity</span>
+              <span className="bg-teal-500/15 border border-teal-500/30 text-teal-400 px-3 py-1.5 rounded-lg font-semibold">✓ A cleaner neighbourhood</span>
+              <span className="bg-teal-500/15 border border-teal-500/30 text-teal-400 px-3 py-1.5 rounded-lg font-semibold">✓ A happier you</span>
+              <span className="bg-teal-500/15 border border-teal-500/30 text-teal-400 px-3 py-1.5 rounded-lg font-semibold">✓ Less raccoon activity</span>
             </div>
           </div>
           <div className="flex-shrink-0 text-center">
-            <p className="text-xs text-amber-400/60 mb-2 font-semibold">RECOMMENDED TREATMENT</p>
-            <a href="#book" className="inline-flex flex-col items-center gap-1 bg-green-500 hover:bg-green-400 text-black font-black px-5 py-3 rounded-xl transition-colors">
+            <p className="text-xs text-orange-400/60 mb-2 font-semibold">RECOMMENDED TREATMENT</p>
+            <a href="#book" className="inline-flex flex-col items-center gap-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black px-5 py-3 rounded-xl transition-all">
               <span className="text-base">Fix This</span>
-              <span className="text-xs font-bold opacity-70">from $25</span>
+              <span className="text-xs font-bold opacity-80">from $25</span>
             </a>
           </div>
         </div>
@@ -245,21 +239,21 @@ export default function BinPilotPage() {
             ))}
           </div>
 
-          <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 sm:p-8 text-center max-w-3xl mx-auto">
-            <Sparkles size={22} className="text-green-400 mx-auto mb-3" />
+          <div className="bg-teal-500/10 border border-teal-500/20 rounded-2xl p-6 sm:p-8 text-center max-w-3xl mx-auto">
+            <Sparkles size={22} className="text-teal-400 mx-auto mb-3" />
             <p className="text-lg sm:text-xl font-bold mb-1">Your bin doesn&apos;t have to be a biohazard.</p>
             <p className="text-slate-400 text-sm mb-5">One clean and the smell, the bugs, and the bacteria are gone. We keep it that way.</p>
-            <a href="#book" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-400 text-black font-bold px-6 py-3 rounded-xl transition-colors">
+            <a href="#book" className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold px-6 py-3 rounded-xl transition-all">
               Fix it now — from $25 <ArrowRight size={15} />
             </a>
           </div>
         </div>
       </section>
 
-      {/* ── Pricing / What you get ── */}
+      {/* ── Pricing ── */}
       <section id="pricing" className="py-20 max-w-2xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
+          <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
             NEIGHBOURHOOD INTRO OFFER
           </div>
           <h2 className="text-3xl sm:text-4xl font-black mb-3">What you get</h2>
@@ -285,22 +279,22 @@ export default function BinPilotPage() {
 
         <div className="grid grid-cols-3 gap-4 mb-6">
           {[
-            { bins: '1 Bin', price: '$25' },
+            { bins: '1 Bin',  price: '$25' },
             { bins: '2 Bins', price: '$40', highlight: true },
             { bins: '3 Bins', price: '$50' },
           ].map(p => (
-            <div key={p.bins} className={`rounded-2xl p-5 text-center ${p.highlight ? 'bg-green-500/10 border-2 border-green-500/40' : 'bg-white/[0.03] border border-white/8'}`}>
+            <div key={p.bins} className={`rounded-2xl p-5 text-center ${p.highlight ? 'bg-teal-500/10 border-2 border-teal-500/40' : 'bg-white/[0.03] border border-white/8'}`}>
               <span className="text-slate-400 text-xs font-medium block mb-1">{p.bins}</span>
               <span className="text-3xl font-black">{p.price}</span>
             </div>
           ))}
         </div>
 
-        <a href="#book" className="glow-pulse flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-xl transition-colors text-base">
+        <a href="#book" className="glow-pulse-orange flex items-center justify-center gap-2 w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black py-4 rounded-xl transition-all text-base">
           Book a Clean <ArrowRight size={16} />
         </a>
         <p className="text-center text-xs text-slate-600 mt-4">
-          Multi-unit buildings — <a href="mailto:binpilotmimico@gmail.com" className="text-green-500 hover:underline">email us for a quote</a>.
+          Multi-unit buildings — <a href="mailto:binpilotmimico@gmail.com" className="text-teal-500 hover:underline">email us for a quote</a>.
         </p>
       </section>
 
@@ -331,7 +325,7 @@ export default function BinPilotPage() {
       {/* ── Smart Booking ── */}
       <section id="book" className="py-20 max-w-2xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
+          <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
             <Zap size={11} /> 30 SECONDS · 3 TAPS · DONE
           </div>
           <h2 className="text-3xl sm:text-4xl font-black mb-3">Book your clean</h2>
@@ -339,9 +333,9 @@ export default function BinPilotPage() {
         </div>
 
         {fpState.succeeded ? (
-          <div className="text-center py-14 bg-green-500/10 border border-green-500/20 rounded-2xl px-8">
+          <div className="text-center py-14 bg-teal-500/10 border border-teal-500/20 rounded-2xl px-8">
             <span className="text-5xl block mb-5">🎉</span>
-            <h3 className="text-2xl font-black mb-3 text-green-400">You&apos;re in!</h3>
+            <h3 className="text-2xl font-black mb-3 text-teal-400">You&apos;re in!</h3>
             <p className="text-slate-300 leading-relaxed">
               Booked for <span className="font-bold">{serviceDate}</span>. Steve will text you shortly to confirm your spot.
             </p>
@@ -349,75 +343,71 @@ export default function BinPilotPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Pre-filled date */}
-            <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/30 rounded-xl px-5 py-4">
-              <Calendar size={20} className="text-green-400 flex-shrink-0" />
+            <div className="flex items-center gap-3 bg-teal-500/10 border border-teal-500/30 rounded-xl px-5 py-4">
+              <Calendar size={20} className="text-teal-400 flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-xs text-slate-400">Your clean date — right after Tuesday pickup</p>
-                <p className="font-bold text-green-400 text-lg">{serviceDate || 'This Wednesday'}</p>
+                <p className="font-bold text-teal-400 text-lg">{serviceDate || 'This Wednesday'}</p>
               </div>
               <div className="text-right hidden sm:block">
                 <p className="text-xs text-slate-500">Spots remaining</p>
-                <p className="text-amber-400 font-black text-xl count-up">{spotsLeft}</p>
+                <p className="text-orange-400 font-black text-xl count-up">{spotsLeft}</p>
               </div>
             </div>
 
-            {/* Step 1 */}
             <div>
               <label className="block text-sm font-bold text-slate-200 mb-2">1. Which bins?</label>
               <div className="grid grid-cols-3 gap-3">
                 {binOptions.map(bin => (
                   <button key={bin} type="button" onClick={() => toggleBin(bin)}
-                    className={`py-3.5 rounded-xl text-sm font-bold border transition-all ${form.bins.includes(bin) ? 'bg-green-500/20 border-green-500/50 text-green-400 scale-[1.02]' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/25'}`}>
+                    className={`py-3.5 rounded-xl text-sm font-bold border transition-all ${form.bins.includes(bin) ? 'bg-teal-500/20 border-teal-500/50 text-teal-400 scale-[1.02]' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/25'}`}>
                     {bin}
                   </button>
                 ))}
               </div>
               {binCount > 0 && (
-                <p className="text-green-400 font-black text-lg mt-2 count-up">${total} total{form.plan === 'Monthly' ? ' per clean' : ''}</p>
+                <p className="text-teal-400 font-black text-lg mt-2 count-up">${total} total{form.plan === 'Monthly' ? ' per clean' : ''}</p>
               )}
             </div>
 
-            {/* Step 2 */}
             <div>
               <label className="block text-sm font-bold text-slate-200 mb-2">2. How often?</label>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { id: 'Monthly', label: 'Monthly', sub: 'Best value · never think about it again' },
+                  { id: 'Monthly',  label: 'Monthly',  sub: 'Best value · never think about it again' },
                   { id: 'One-Time', label: 'One-Time', sub: 'Just this once' },
                 ].map(opt => (
                   <button key={opt.id} type="button" onClick={() => setForm(f => ({ ...f, plan: opt.id }))}
-                    className={`px-4 py-3.5 rounded-xl text-left border transition-all ${form.plan === opt.id ? 'bg-green-500/20 border-green-500/50 scale-[1.01]' : 'bg-white/5 border-white/10 hover:border-white/20'}`}>
-                    <span className={`block text-sm font-bold ${form.plan === opt.id ? 'text-green-400' : 'text-slate-300'}`}>{opt.label}</span>
+                    className={`px-4 py-3.5 rounded-xl text-left border transition-all ${form.plan === opt.id ? 'bg-teal-500/20 border-teal-500/50 scale-[1.01]' : 'bg-white/5 border-white/10 hover:border-white/20'}`}>
+                    <span className={`block text-sm font-bold ${form.plan === opt.id ? 'text-teal-400' : 'text-slate-300'}`}>{opt.label}</span>
                     <span className="block text-xs text-slate-500 mt-0.5">{opt.sub}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Step 3 */}
             <div>
               <label className="block text-sm font-bold text-slate-200 mb-2">3. Where?</label>
               <div className="space-y-3">
                 <input required type="text" placeholder="Street address (Mimico or New Toronto)" value={form.address}
                   onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-green-500/50 transition-colors" />
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors" />
                 <div className="grid sm:grid-cols-2 gap-3">
                   <input required type="text" placeholder="Your name" value={form.name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-green-500/50 transition-colors" />
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors" />
                   <input required type="tel" placeholder="Mobile number" value={form.phone}
                     onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-green-500/50 transition-colors" />
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors" />
                 </div>
                 {showNotes ? (
                   <div className="space-y-3">
                     <input type="email" placeholder="Email (optional — for confirmation)" value={form.email}
                       onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-green-500/50 transition-colors" />
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors" />
                     <textarea rows={2} placeholder="Gate code, where bins live, different preferred day..."
                       value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-green-500/50 transition-colors resize-none" />
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 transition-colors resize-none" />
                   </div>
                 ) : (
                   <button type="button" onClick={() => setShowNotes(true)} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
@@ -428,13 +418,13 @@ export default function BinPilotPage() {
             </div>
 
             <button type="submit" disabled={fpState.submitting || binCount === 0}
-              className="glow-pulse w-full bg-green-500 hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-black py-4 rounded-xl transition-colors text-lg">
+              className="glow-pulse-orange w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-4 rounded-xl transition-all text-lg">
               {fpState.submitting ? 'Booking...' : binCount === 0 ? 'Tap your bins above to start' : `Book My Clean — $${total}`}
             </button>
 
             <p className="text-center text-xs text-slate-600">
               Rather text? Send <span className="text-slate-400 font-bold">BIN CLEAN</span> to{' '}
-              <a href="sms:+15197293673&body=BIN CLEAN" className="text-green-500 font-bold">519-729-3673</a>
+              <a href="sms:+15197293673&body=BIN CLEAN" className="text-teal-500 font-bold">519-729-3673</a>
             </p>
           </form>
         )}
@@ -448,7 +438,7 @@ export default function BinPilotPage() {
             <p className="text-slate-400 max-w-xl mx-auto">From booking to spotless bins — and you lift exactly nothing.</p>
           </div>
           <div className="relative">
-            <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-green-500/40 via-green-500/20 to-transparent hidden sm:block" />
+            <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-teal-500/40 via-teal-500/20 to-transparent hidden sm:block" />
             <div className="space-y-5">
               {pathway.map((p, i) => (
                 <div key={i} className="relative flex gap-5 items-start">
@@ -487,10 +477,10 @@ export default function BinPilotPage() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl overflow-hidden border border-green-500/20 bg-white/[0.02]">
-            <div className="bg-green-500/10 px-5 py-3 flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
-              <span className="text-green-400 font-black text-xs tracking-widest">AFTER — 200°F LATER</span>
+          <div className="rounded-2xl overflow-hidden border border-teal-500/20 bg-white/[0.02]">
+            <div className="bg-teal-500/10 px-5 py-3 flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-teal-500" />
+              <span className="text-teal-400 font-black text-xs tracking-widest">AFTER — 200°F LATER</span>
             </div>
             <div className="aspect-[4/3] flex items-center justify-center p-8 text-center">
               <div>
@@ -503,11 +493,11 @@ export default function BinPilotPage() {
         </div>
       </section>
 
-      {/* ── Fun facts (the brand humour) ── */}
+      {/* ── Fun facts ── */}
       <section className="py-20 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
+            <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
               FROM THE BINPILOT FILES
             </div>
             <h2 className="text-3xl sm:text-4xl font-black mb-3">Three things you can&apos;t un-know</h2>
@@ -515,10 +505,10 @@ export default function BinPilotPage() {
           <div className="grid md:grid-cols-3 gap-5 mb-10">
             {[
               { e: '🦝', title: 'Raccoon Therapist Report', body: 'Patient: Your Garbage Bin. Symptoms: smells terrible, attracts bad influences, hoards garbage, causes relationship problems with neighbours. Recommended treatment: professional cleaning, once monthly.' },
-              { e: '🚽', title: 'Grosser Than Your Toilet', body: 'Studies show household garbage bins can carry more bacteria per square inch than a toilet seat. You clean one of those religiously. The other one — not so much. We can help.' },
-              { e: '🏆', title: 'Raccoons Have Standards', body: 'Fun fact: raccoons have higher cleanliness standards than some homeowners. Even this guy thinks your bin is gross. Let\'s fix that.' },
+              { e: '🚽', title: 'Grosser Than Your Toilet',  body: 'Studies show household garbage bins can carry more bacteria per square inch than a toilet seat. You clean one of those religiously. The other one — not so much. We can help.' },
+              { e: '🏆', title: 'Raccoons Have Standards',   body: 'Fun fact: raccoons have higher cleanliness standards than some homeowners. Even this guy thinks your bin is gross. Let\'s fix that.' },
             ].map(f => (
-              <div key={f.title} className="bg-white/[0.03] border border-white/8 rounded-2xl p-6 hover:border-green-500/20 transition-colors">
+              <div key={f.title} className="bg-white/[0.03] border border-white/8 rounded-2xl p-6 hover:border-teal-500/20 transition-colors">
                 <span className="text-4xl block mb-4">{f.e}</span>
                 <h3 className="font-black mb-2">{f.title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{f.body}</p>
@@ -526,7 +516,7 @@ export default function BinPilotPage() {
             ))}
           </div>
           <div className="text-center">
-            <a href="#book" className="glow-pulse inline-flex items-center gap-2 bg-green-500 hover:bg-green-400 text-black font-black px-8 py-4 rounded-xl text-base transition-colors">
+            <a href="#book" className="glow-pulse-orange inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black px-8 py-4 rounded-xl text-base transition-all">
               Okay, clean my bins <ArrowRight size={16} />
             </a>
           </div>
@@ -536,9 +526,9 @@ export default function BinPilotPage() {
       {/* ── Bin types ── */}
       <section className="py-12 max-w-lg mx-auto px-4 sm:px-6 grid grid-cols-3 gap-4">
         {[
-          { icon: Trash2, label: 'Garbage', color: 'text-slate-400' },
-          { icon: Recycle, label: 'Recycling', color: 'text-blue-400' },
-          { icon: Leaf, label: 'Green Bin', color: 'text-green-400' },
+          { icon: Trash2,  label: 'Garbage',   color: 'text-slate-400' },
+          { icon: Recycle, label: 'Recycling',  color: 'text-sky-400' },
+          { icon: Leaf,    label: 'Green Bin',  color: 'text-teal-400' },
         ].map(b => (
           <div key={b.label} className="text-center bg-white/[0.03] border border-white/8 rounded-xl py-5 px-3">
             <b.icon size={24} className={`${b.color} mx-auto mb-2`} />
@@ -572,7 +562,8 @@ export default function BinPilotPage() {
       <section className="py-28 max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <div className="relative">
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-green-500/8 rounded-full blur-[100px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-teal-500/8 rounded-full blur-[100px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-orange-500/6 rounded-full blur-[80px]" />
           </div>
           <div className="relative">
             <h2 className="text-4xl sm:text-6xl font-black mb-4">Your bin is waiting.<br /><span className="text-slate-500">Sadly.</span></h2>
@@ -580,12 +571,12 @@ export default function BinPilotPage() {
               Join your Mimico and New Toronto neighbours who never deal with a gross bin again.
             </p>
             <p className="text-slate-500 text-sm mb-3">
-              <span className="live-dot w-1.5 h-1.5 rounded-full bg-amber-400 inline-block mr-1.5" />
-              <span className="text-amber-400 font-bold">{spotsLeft} spots</span> left this week.
+              <span className="live-dot w-1.5 h-1.5 rounded-full bg-orange-400 inline-block mr-1.5" />
+              <span className="text-orange-400 font-bold">{spotsLeft} spots</span> left this week.
             </p>
             <p className="text-slate-600 text-sm mb-10">Thanks for supporting a local family. — Steve</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="#book" className="glow-pulse inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-black font-black px-8 py-4 rounded-xl text-lg transition-colors">
+              <a href="#book" className="glow-pulse-orange inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black px-8 py-4 rounded-xl text-lg transition-all">
                 Book Online <ArrowRight size={18} />
               </a>
               <a href="sms:+15197293673&body=BIN CLEAN" className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold px-8 py-4 rounded-xl text-lg transition-colors">
@@ -600,8 +591,8 @@ export default function BinPilotPage() {
       <footer className="border-t border-white/5 py-10 pb-28 md:pb-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-green-500 flex items-center justify-center"><Trash2 size={13} className="text-white" /></div>
-            <span className="font-black tracking-tight">Bin<span className="text-green-400">Pilot</span></span>
+            <div className="w-7 h-7 rounded-lg bg-teal-500 flex items-center justify-center"><Trash2 size={13} className="text-white" /></div>
+            <span className="font-black tracking-tight">Bin<span className="text-teal-400">Pilot</span></span>
             <span className="text-slate-600 text-sm ml-2">Mimico Bin Cleaning</span>
           </div>
           <div className="flex items-center gap-4 text-sm text-slate-500">
@@ -615,11 +606,11 @@ export default function BinPilotPage() {
       </footer>
 
       {/* ── Sticky mobile CTA bar ── */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0a0f0a]/95 backdrop-blur-md border-t border-white/10 px-4 py-3 flex gap-3">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#04080f]/95 backdrop-blur-md border-t border-white/10 px-4 py-3 flex gap-3">
         <a href="sms:+15197293673&body=BIN CLEAN" className="flex-1 inline-flex items-center justify-center gap-1.5 bg-white/5 border border-white/10 text-white font-bold text-sm py-3 rounded-xl">
           <Phone size={15} /> Text
         </a>
-        <a href="#book" className="flex-[2] inline-flex items-center justify-center gap-1.5 bg-green-500 text-black font-black text-sm py-3 rounded-xl glow-pulse">
+        <a href="#book" className="flex-[2] inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-sm py-3 rounded-xl glow-pulse-orange">
           Book My Clean →
         </a>
       </div>
