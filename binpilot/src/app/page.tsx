@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from '@formspree/react';
 import {
   Trash2, CheckCircle, MapPin, Phone, Mail, ChevronDown,
   Leaf, Menu, X, ArrowRight, AlertTriangle, Recycle,
@@ -8,7 +9,6 @@ import {
   Heart, Bug, Skull, Sparkles, Send, Star, ClipboardX, Zap,
 } from 'lucide-react';
 
-const FORMSPREE_URL = 'https://formspree.io/f/YOUR_FORM_ID';
 
 function nextWednesday() {
   const d = new Date();
@@ -28,8 +28,7 @@ export default function BinPilotPage() {
   const [showNotes, setShowNotes] = useState(false);
   const [spotsLeft] = useState(() => Math.floor(Math.random() * 3) + 2); // 2–4
   const [form, setForm] = useState({ name: '', address: '', phone: '', email: '', bins: [] as string[], plan: 'Monthly', notes: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [fpState, fpSubmit] = useForm('xzdlepgr');
 
   useEffect(() => {
     setServiceDate(nextWednesday().toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric' }));
@@ -80,15 +79,11 @@ export default function BinPilotPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
-    try {
-      await fetch(FORMSPREE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ...form, bins: form.bins.join(', '), requested_date: serviceDate }),
-      });
-      setSubmitted(true);
-    } finally { setSubmitting(false); }
+    await fpSubmit({
+      ...form,
+      bins: form.bins.join(', '),
+      requested_date: serviceDate,
+    });
   }
 
   const binCount = form.bins.length;
@@ -343,7 +338,7 @@ export default function BinPilotPage() {
           <p className="text-slate-400">We already picked your date. Just confirm the details.</p>
         </div>
 
-        {submitted ? (
+        {fpState.succeeded ? (
           <div className="text-center py-14 bg-green-500/10 border border-green-500/20 rounded-2xl px-8">
             <span className="text-5xl block mb-5">🎉</span>
             <h3 className="text-2xl font-black mb-3 text-green-400">You&apos;re in!</h3>
@@ -432,9 +427,9 @@ export default function BinPilotPage() {
               </div>
             </div>
 
-            <button type="submit" disabled={submitting || binCount === 0}
+            <button type="submit" disabled={fpState.submitting || binCount === 0}
               className="glow-pulse w-full bg-green-500 hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-black py-4 rounded-xl transition-colors text-lg">
-              {submitting ? 'Booking...' : binCount === 0 ? 'Tap your bins above to start' : `Book My Clean — $${total}`}
+              {fpState.submitting ? 'Booking...' : binCount === 0 ? 'Tap your bins above to start' : `Book My Clean — $${total}`}
             </button>
 
             <p className="text-center text-xs text-slate-600">
