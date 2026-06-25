@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createSupabaseClient } from '@/lib/supabase';
 import { STAGES, INSPECTION_TYPES } from '@/lib/constants';
 import {
   Activity, AlertTriangle, Building2, Calendar, Camera, CheckCircle2,
   ClipboardCheck, ClipboardList, Home, Loader2, LogOut, Menu, Plus,
-  Search, ShieldCheck, TrendingUp, User, X
+  Search, ShieldCheck, Trash2, TrendingUp, User, X
 } from 'lucide-react';
 
-type Tab = 'dashboard' | 'units' | 'progress' | 'deficiencies' | 'daily' | 'inspections';
+type Tab = 'dashboard' | 'units' | 'progress' | 'deficiencies' | 'daily' | 'inspections' | 'photos';
 
 type Props = {
   profile: any;
@@ -24,6 +24,7 @@ const tabs = [
   { id: 'deficiencies', label: 'Deficiencies', icon: AlertTriangle },
   { id: 'daily', label: 'Daily Log', icon: ClipboardList },
   { id: 'inspections', label: 'Inspections', icon: ClipboardCheck },
+  { id: 'photos', label: 'Photos', icon: Camera },
 ] as const;
 
 const priorityRank: Record<string, number> = { P1: 1, P2: 2, P3: 3, P4: 4 };
@@ -139,11 +140,12 @@ export default function AuroraOperationsApp({ profile, user, onSignOut }: Props)
             {tab === 'deficiencies' && <DeficienciesPanel units={units} deficiencies={deficiencies} canEdit={canEdit} reload={loadDeficiencies} userId={user?.id} />}
             {tab === 'daily' && <DailyLogPanel units={units} dailyLog={dailyLog} canEdit={canEdit} reload={loadDailyLog} userId={user?.id} />}
             {tab === 'inspections' && <InspectionsPanel units={units} inspections={inspections} canEdit={canEdit} reload={loadInspections} />}
+            {tab === 'photos' && <PhotosPanel units={units} canEdit={canEdit} userId={user?.id} />}
           </>
         )}
       </main>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950 border-t border-slate-700 grid grid-cols-6">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950 border-t border-slate-700 grid grid-cols-7">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button key={id} onClick={() => setTab(id)} className={`py-2 flex flex-col items-center gap-1 text-[10px] ${tab === id ? 'text-amber-400' : 'text-slate-400'}`}>
             <Icon size={18} /><span>{label.split(' ')[0]}</span>
@@ -255,3 +257,133 @@ function Input({ label, value, onChange, type = 'text', placeholder = '', classN
 function TextArea({ label, value, onChange }: any) { return <label className="block"><span className="text-xs uppercase tracking-widest text-slate-400 mb-1 block">{label}</span><textarea value={value} onChange={e => onChange(e.target.value)} className="input min-h-[90px]" /></label> }
 function Select({ value, onChange, options }: any) { return <select value={value} onChange={e => onChange(e.target.value)} className="input">{options.map((o: any) => <option key={o[0]} value={o[0]}>{o[1]}</option>)}</select> }
 function Modal({ title, close, children }: any) { return <div className="fixed inset-0 z-50 flex items-center justify-center p-4"><div className="absolute inset-0 bg-black/70" onClick={close} /><div className="relative w-full max-w-lg card-dark p-5"><div className="flex items-center justify-between mb-4"><h2 className="text-xl font-bold text-white">{title}</h2><button onClick={close}><X size={20} /></button></div>{children}</div></div> }
+
+const PHOTO_CATEGORIES = ['general','foundation','framing','mechanical','electrical','plumbing','finishing','deficiency','inspection'];
+
+function PhotosPanel({ units, canEdit, userId }: any) {
+  const supabase = createSupabaseClient();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [urls, setUrls] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [form, setForm] = useState({ unit_id: '', category: 'general', caption: '' });
+  const [filterUnit, setFilterUnit] = useState('');
+  const [filterCat, setFilterCat] = useState('');
+
+  async function loadPhotos() {
+    setLoading(true);
+    const { data } = await supabase.from('photos').select('*').order('created_at', { ascending: false }).limit(200);
+    const rows = data || [];
+    setPhotos(rows);
+    const urlMap: Record<string, string> = {};
+    await Promise.all(rows.map(async (p: any) => {
+      const { data: signed } = await supabase.storage.from('photos').createSignedUrl(p.storage_path, 3600);
+      if (signed?.signedUrl) urlMap[p.id] = signed.signedUrl;
+    }));
+    setUrls(urlMap);
+    setLoading(false);
+  }
+
+  useEffect(() => { loadPhotos(); }, []);
+
+  async function upload(file: File) {
+    setUploading(true);
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const path = `site/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: storageErr } = await supabase.storage.from('photos').upload(path, file, { contentType: file.type });
+    if (storageErr) { alert(`Upload failed: ${storageErr.message}`); setUploading(false); return; }
+    const unit = units.find((u: any) => u.id === form.unit_id);
+    const { error: dbErr } = await supabase.from('photos').insert({
+      storage_path: path,
+      unit_id: form.unit_id || null,
+      site_id: unit?.site_id || null,
+      caption: form.caption.trim() || null,
+      category: form.category,
+      uploaded_by: userId || null,
+    });
+    if (dbErr) { alert(`Save failed: ${dbErr.message}`); setUploading(false); return; }
+    setForm(f => ({ ...f, caption: '' }));
+    loadPhotos();
+    setUploading(false);
+  }
+
+  async function deletePhoto(p: any) {
+    if (!confirm('Delete this photo? This cannot be undone.')) return;
+    await supabase.storage.from('photos').remove([p.storage_path]);
+    await supabase.from('photos').delete().eq('id', p.id);
+    setPhotos(prev => prev.filter(x => x.id !== p.id));
+  }
+
+  const visible = photos.filter((p: any) => {
+    if (filterUnit && p.unit_id !== filterUnit) return false;
+    if (filterCat && p.category !== filterCat) return false;
+    return true;
+  });
+
+  return (
+    <div className="space-y-4">
+      <PageTitle title="Photos" subtitle="Field photo documentation tied to units, stages, and deficiencies." />
+
+      {canEdit && (
+        <Card title="Upload Photo" icon={Camera}>
+          <div className="grid md:grid-cols-5 gap-2 items-end">
+            <Select value={form.unit_id} onChange={(v: string) => setForm(f => ({ ...f, unit_id: v }))} options={[['', 'Site (no unit)'], ...units.map((u: any) => [u.id, unitLabel(u)])]} />
+            <Select value={form.category} onChange={(v: string) => setForm(f => ({ ...f, category: v }))} options={PHOTO_CATEGORIES.map(c => [c, c.charAt(0).toUpperCase() + c.slice(1)])} />
+            <Input className="md:col-span-2" placeholder="Caption (optional)" value={form.caption} onChange={(v: string) => setForm(f => ({ ...f, caption: v }))} />
+            <button disabled={uploading} onClick={() => fileRef.current?.click()} className="btn-primary flex items-center justify-center gap-2">
+              {uploading ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
+              {uploading ? 'Uploading…' : 'Add Photo'}
+            </button>
+            <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = ''; }} />
+          </div>
+        </Card>
+      )}
+
+      <div className="flex flex-wrap gap-2">
+        <Select value={filterUnit} onChange={setFilterUnit} options={[['', 'All units'], ...units.map((u: any) => [u.id, unitLabel(u)])]} />
+        <Select value={filterCat} onChange={setFilterCat} options={[['', 'All categories'], ...PHOTO_CATEGORIES.map(c => [c, c.charAt(0).toUpperCase() + c.slice(1)])]} />
+        {(filterUnit || filterCat) && <button onClick={() => { setFilterUnit(''); setFilterCat(''); }} className="text-xs text-amber-300 hover:underline px-2">Clear filters</button>}
+        <span className="ml-auto text-xs text-slate-400">{visible.length} photo{visible.length !== 1 ? 's' : ''}</span>
+      </div>
+
+      {loading ? <Loading /> : visible.length === 0 ? (
+        <div className="card-dark p-12 text-center text-slate-500">
+          {photos.length === 0 ? 'No photos yet. Upload the first one above.' : 'No photos match these filters.'}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+          {visible.map((p: any) => {
+            const unit = units.find((u: any) => u.id === p.unit_id);
+            return (
+              <div key={p.id} className="card-dark overflow-hidden group">
+                <div className="relative aspect-video bg-slate-900">
+                  {urls[p.id] ? (
+                    <img src={urls[p.id]} alt={p.caption || 'Site photo'} className="w-full h-full object-cover" loading="lazy" />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <Loader2 className="animate-spin text-slate-600" size={24} />
+                    </div>
+                  )}
+                  {canEdit && (
+                    <button onClick={() => deletePhoto(p)} title="Delete" className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 p-1.5 bg-red-950/90 rounded border border-red-800 text-red-300 hover:text-white transition">
+                      <Trash2 size={12} />
+                    </button>
+                  )}
+                </div>
+                <div className="p-2 space-y-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <Pill text={p.category || 'general'} />
+                    {unit && <span className="text-xs text-slate-400">{unitLabel(unit)}</span>}
+                  </div>
+                  {p.caption && <div className="text-xs text-slate-300">{p.caption}</div>}
+                  <div className="text-[10px] text-slate-600">{new Date(p.created_at).toLocaleDateString('en-CA')}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

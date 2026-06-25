@@ -53,6 +53,19 @@ body {
 .card {
   @apply bg-ink-800 border border-ink-700 rounded-lg;
 }
+.card-dark {
+  @apply bg-ink-800 border border-ink-700 rounded-lg;
+}
+
+/* Form inputs */
+.input {
+  @apply w-full bg-ink-900 border border-ink-700 rounded px-3 py-2 text-sm text-white placeholder:text-concrete focus:border-gold/60 focus:outline-none;
+}
+
+/* Primary action button */
+.btn-primary {
+  @apply bg-gold text-ink font-semibold px-4 py-2 rounded hover:brightness-110 transition active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+}
 
 /* Status pills - construction-friendly */
 .pill-pass { @apply bg-green-900/40 text-green-300 border border-green-800 px-2 py-0.5 rounded text-xs font-medium; }
