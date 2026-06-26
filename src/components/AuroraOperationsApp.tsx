@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { createSupabaseClient } from '@/lib/supabase';
 import { STAGES, INSPECTION_TYPES } from '@/lib/constants';
 import {
-  Activity, AlertTriangle, Building2, Calendar, Camera, CheckCircle2,
-  ClipboardCheck, ClipboardList, Home, Loader2, LogOut, Menu, Plus,
+  Activity, AlertTriangle, BarChart2, Building2, Calendar, Camera, CheckCircle2,
+  ClipboardCheck, ClipboardList, Home, Loader2, LogOut, Mail, Menu, Plus,
   Search, ShieldCheck, TrendingUp, User, X
 } from 'lucide-react';
 
-type Tab = 'dashboard' | 'units' | 'progress' | 'deficiencies' | 'daily' | 'inspections';
+type Tab = 'dashboard' | 'units' | 'progress' | 'deficiencies' | 'daily' | 'inspections' | 'marketing';
 
 type Props = {
   profile: any;
@@ -24,6 +24,7 @@ const tabs = [
   { id: 'deficiencies', label: 'Deficiencies', icon: AlertTriangle },
   { id: 'daily', label: 'Daily Log', icon: ClipboardList },
   { id: 'inspections', label: 'Inspections', icon: ClipboardCheck },
+  { id: 'marketing', label: 'Marketing', icon: BarChart2 },
 ] as const;
 
 const priorityRank: Record<string, number> = { P1: 1, P2: 2, P3: 3, P4: 4 };
@@ -139,13 +140,14 @@ export default function AuroraOperationsApp({ profile, user, onSignOut }: Props)
             {tab === 'deficiencies' && <DeficienciesPanel units={units} deficiencies={deficiencies} canEdit={canEdit} reload={loadDeficiencies} userId={user?.id} />}
             {tab === 'daily' && <DailyLogPanel units={units} dailyLog={dailyLog} canEdit={canEdit} reload={loadDailyLog} userId={user?.id} />}
             {tab === 'inspections' && <InspectionsPanel units={units} inspections={inspections} canEdit={canEdit} reload={loadInspections} />}
+            {tab === 'marketing' && <MarketingPanel units={units} />}
           </>
         )}
       </main>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950 border-t border-slate-700 grid grid-cols-6">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950 border-t border-slate-700 flex overflow-x-auto">
         {tabs.map(({ id, label, icon: Icon }) => (
-          <button key={id} onClick={() => setTab(id)} className={`py-2 flex flex-col items-center gap-1 text-[10px] ${tab === id ? 'text-amber-400' : 'text-slate-400'}`}>
+          <button key={id} onClick={() => setTab(id)} className={`flex-1 min-w-[52px] py-2 flex flex-col items-center gap-1 text-[10px] ${tab === id ? 'text-amber-400' : 'text-slate-400'}`}>
             <Icon size={18} /><span>{label.split(' ')[0]}</span>
           </button>
         ))}
@@ -255,3 +257,82 @@ function Input({ label, value, onChange, type = 'text', placeholder = '', classN
 function TextArea({ label, value, onChange }: any) { return <label className="block"><span className="text-xs uppercase tracking-widest text-slate-400 mb-1 block">{label}</span><textarea value={value} onChange={e => onChange(e.target.value)} className="input min-h-[90px]" /></label> }
 function Select({ value, onChange, options }: any) { return <select value={value} onChange={e => onChange(e.target.value)} className="input">{options.map((o: any) => <option key={o[0]} value={o[0]}>{o[1]}</option>)}</select> }
 function Modal({ title, close, children }: any) { return <div className="fixed inset-0 z-50 flex items-center justify-center p-4"><div className="absolute inset-0 bg-black/70" onClick={close} /><div className="relative w-full max-w-lg card-dark p-5"><div className="flex items-center justify-between mb-4"><h2 className="text-xl font-bold text-white">{title}</h2><button onClick={close}><X size={20} /></button></div>{children}</div></div> }
+
+function MarketingPanel({ units }: { units: any[] }) {
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [campaignLoading, setCampaignLoading] = useState(true);
+  const [campaignError, setCampaignError] = useState<string | null>(null);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const in30 = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+  const thisMonth = today.slice(0, 7);
+
+  const sold = units.filter((u: any) => u.closing_date && u.closing_date <= today).length;
+  const closingThisMonth = units.filter((u: any) => u.closing_date?.startsWith(thisMonth)).length;
+  const closingNext30 = units.filter((u: any) => u.closing_date > today && u.closing_date <= in30).length;
+  const available = units.filter((u: any) => !u.closing_date).length;
+
+  useEffect(() => {
+    fetch('/api/marketing/campaigns')
+      .then(r => r.json())
+      .then(d => { if (d.error) setCampaignError(d.error); else setCampaigns(d.campaigns || []); })
+      .catch(e => setCampaignError(e.message))
+      .finally(() => setCampaignLoading(false));
+  }, []);
+
+  const upcoming = units
+    .filter((u: any) => u.closing_date && u.closing_date >= today)
+    .sort((a: any, b: any) => a.closing_date.localeCompare(b.closing_date))
+    .slice(0, 8);
+
+  return (
+    <div className="space-y-6">
+      <PageTitle title="Marketing Performance" subtitle="Sales pipeline · email campaigns · conversion overview" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Kpi label="Total Units" value={units.length} icon={Home} />
+        <Kpi label="Sold / Closed" value={sold} icon={CheckCircle2} />
+        <Kpi label="Closing This Month" value={closingThisMonth} icon={Calendar} />
+        <Kpi label="Available" value={available} icon={BarChart2} />
+      </div>
+      <div className="grid lg:grid-cols-2 gap-4">
+        <Card title="Closing Pipeline (Next 30 Days)" icon={Calendar}>
+          {upcoming.length ? upcoming.map((u: any) => (
+            <div key={u.id} className="flex justify-between items-center py-2 border-b border-slate-700 last:border-0 text-sm">
+              <div><span className="font-mono text-white">{unitLabel(u)}</span><span className="text-slate-400 ml-2">{u.model || '—'}</span></div>
+              <span className={u.closing_date <= in30 ? 'text-amber-300' : 'text-slate-300'}>{u.closing_date}</span>
+            </div>
+          )) : <Empty text="No upcoming closings scheduled." />}
+        </Card>
+        <Card title="Email Campaigns" icon={Mail}>
+          {campaignLoading ? (
+            <div className="flex items-center gap-2 text-slate-400 text-sm py-4"><Loader2 size={14} className="animate-spin text-amber-400" />Loading...</div>
+          ) : campaignError ? (
+            <div className="text-sm text-slate-400 py-2">
+              {campaignError.toLowerCase().includes('not configured')
+                ? <span>Add <code className="text-amber-300">MAILERLITE_API_KEY</code> in Vercel environment variables to connect email campaigns.</span>
+                : campaignError}
+            </div>
+          ) : campaigns.length === 0 ? (
+            <Empty text="No sent campaigns found." />
+          ) : (
+            <div className="space-y-2">
+              {campaigns.map((c: any) => (
+                <div key={c.id} className="py-2 border-b border-slate-700 last:border-0">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-sm text-white">{c.name}</span>
+                    <Pill text={c.status || 'sent'} />
+                  </div>
+                  <div className="flex gap-4 mt-1 text-xs text-slate-400">
+                    <span>Sent: <span className="text-slate-200">{c.sent?.toLocaleString() || '—'}</span></span>
+                    <span>Opens: <span className="text-green-300">{c.open_rate != null ? `${c.open_rate}%` : '—'}</span></span>
+                    <span>Clicks: <span className="text-amber-300">{c.click_rate != null ? `${c.click_rate}%` : '—'}</span></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
+    </div>
+  );
+}
