@@ -1787,11 +1787,78 @@
       align-self: flex-start;
     }
 
-    .popup-error-msg {
-      font-size: 12px;
-      color: #f87171;
-      margin-top: 6px;
-      display: none;
+    /* ─── MAILERLITE FORM IN POPUP ──────────────────── */
+    .popup-ml-form .ml-form-embedWrapper,
+    .popup-ml-form .ml-form-embedBody {
+      background: transparent !important;
+      padding: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
+    .popup-ml-form .ml-form-embedContent,
+    .popup-ml-form .ml-form-successBody,
+    .popup-ml-form .ml-form-recaptcha,
+    .popup-ml-form .ml-form-checkboxRow { display: none !important; }
+    .popup-ml-form .ml-form-formContent,
+    .popup-ml-form .ml-form-fieldRow { margin: 0 !important; padding: 0 !important; }
+    .popup-ml-form .ml-field-group { padding: 0 !important; width: 100% !important; }
+    .popup-ml-form .ml-block-form {
+      display: flex !important;
+      align-items: stretch !important;
+      margin-bottom: 10px !important;
+    }
+    .popup-ml-form .ml-form-formContent { flex: 1 !important; display: flex !important; }
+    .popup-ml-form .ml-form-fieldRow { flex: 1 !important; }
+    .popup-ml-form input[type="email"] {
+      width: 100% !important;
+      padding: 13px 16px !important;
+      background: rgba(255,255,255,0.07) !important;
+      border: 1.5px solid rgba(255,255,255,0.13) !important;
+      border-right: none !important;
+      border-radius: 6px 0 0 6px !important;
+      color: var(--white) !important;
+      font-family: 'Barlow', sans-serif !important;
+      font-size: 14px !important;
+      outline: none !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      transition: border-color 0.2s, background 0.2s !important;
+    }
+    .popup-ml-form input[type="email"]:focus {
+      border-color: var(--amber) !important;
+      background: rgba(255,255,255,0.1) !important;
+    }
+    .popup-ml-form input[type="email"]::placeholder { color: rgba(148,163,184,0.7) !important; }
+    .popup-ml-form .ml-form-embedSubmit { display: flex !important; align-items: stretch !important; }
+    .popup-ml-form .ml-form-embedSubmit button.primary {
+      background: var(--amber) !important;
+      color: #121212 !important;
+      font-weight: 700 !important;
+      font-family: 'Barlow', sans-serif !important;
+      font-size: 13px !important;
+      padding: 13px 18px !important;
+      border: none !important;
+      border-radius: 0 6px 6px 0 !important;
+      white-space: nowrap !important;
+      cursor: pointer !important;
+      letter-spacing: 0.03em !important;
+      text-transform: uppercase !important;
+      transition: background 0.15s !important;
+    }
+    .popup-ml-form .ml-form-embedSubmit button.primary:hover { background: #ffca2c !important; }
+    .popup-ml-form .ml-form-embedSubmit button.loading { display: none !important; }
+    @media (max-width: 600px) {
+      .popup-ml-form .ml-block-form { flex-direction: column !important; }
+      .popup-ml-form input[type="email"] {
+        border-right: 1.5px solid rgba(255,255,255,0.13) !important;
+        border-radius: 6px !important;
+      }
+      .popup-ml-form .ml-form-embedSubmit button.primary {
+        border-radius: 6px !important;
+        margin-top: 8px !important;
+        width: 100% !important;
+      }
     }
 
     @media (max-width: 680px) {
@@ -2512,30 +2579,10 @@ ml('account', '2448027');
             </li>
           </ul>
 
-          <form id="popupForm">
-            <div class="popup-field">
-              <input
-                type="email"
-                id="popupEmail"
-                name="email"
-                data-fs-field
-                placeholder="your@email.com"
-                required
-                autocomplete="email"
-                aria-label="Your email address"
-              >
-              <button type="submit" class="btn-primary" data-fs-submit-btn>
-                Send It to Me
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
-            </div>
-            <span data-fs-error="email" class="popup-error-msg"></span>
-            <span data-fs-error class="popup-error-msg"></span>
-            <p class="popup-fine">Free. No spam. Unsubscribe any time.</p>
-          </form>
+          <div class="ml-embedded popup-ml-form" data-form="koGAMk"></div>
+          <p class="popup-fine">Free. No spam. Unsubscribe any time.</p>
 
-          <!-- Success state: shown by @formspree/ajax on submission -->
-          <div class="popup-success" id="popupSuccess" data-fs-success aria-live="polite">
+          <div class="popup-success" id="popupSuccess" aria-live="polite">
             <div class="popup-success-check" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
@@ -2640,20 +2687,29 @@ ml('account', '2448027');
       });
     })();
 
-    // Set bp_subscribed when Formspree shows the success state
-    new MutationObserver(function() {
-      if (document.getElementById('popupSuccess').style.display !== 'none') {
-        localStorage.setItem('bp_subscribed', '1');
+    // Detect MailerLite subscription success in popup → show custom success state
+    (function() {
+      function watchMLSuccess() {
+        var container = document.querySelector('.popup-ml-form');
+        if (!container) return;
+        new MutationObserver(function() {
+          var successBody = container.querySelector('.ml-form-successBody');
+          if (!successBody) return;
+          var style = window.getComputedStyle(successBody);
+          if (style.display !== 'none' && style.visibility !== 'hidden') {
+            localStorage.setItem('bp_subscribed', '1');
+            var successEl = document.getElementById('popupSuccess');
+            if (successEl) successEl.style.display = 'flex';
+          }
+        }).observe(container, { subtree: true, attributes: true, childList: true });
       }
-    }).observe(document.getElementById('popupSuccess'), { attributes: true, attributeFilter: ['style'] });
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', watchMLSuccess);
+      } else {
+        watchMLSuccess();
+      }
+    })();
   </script>
-
-  <!-- Formspree Ajax -->
-  <script>
-    window.formspree = window.formspree || function() { (formspree.q = formspree.q || []).push(arguments); };
-    formspree('initForm', { formElement: '#popupForm', formId: 'xzdqlgal' });
-  </script>
-  <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 
 </body>
 </html>
