@@ -1802,6 +1802,42 @@
       .popup-field input[type="email"] { border-right: 1.5px solid rgba(255,255,255,0.13); border-radius: 6px; }
       .popup-field .btn-primary { border-radius: 6px; margin-top: 8px; }
     }
+
+    /* ─── MAILERLITE FORM INSIDE POPUP ──────────── */
+    .popup-ml-form .ml-form-embed,
+    .popup-ml-form .ml-form-embedWrapper { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+    .popup-ml-form .ml-form-embedBody { background: transparent !important; padding: 0 !important; display: flex !important; flex-direction: row !important; align-items: stretch !important; gap: 0 !important; }
+    .popup-ml-form .ml-form-fieldRow { flex: 1 !important; margin: 0 !important; padding: 0 !important; }
+    .popup-ml-form .ml-field-group { height: 100% !important; }
+    .popup-ml-form input[type="email"] {
+      width: 100% !important; height: 48px !important;
+      background: rgba(255,255,255,0.07) !important;
+      border: 1.5px solid rgba(255,255,255,0.13) !important;
+      border-right: none !important;
+      border-radius: 6px 0 0 6px !important;
+      color: #fff !important; font-family: 'Barlow', sans-serif !important;
+      font-size: 15px !important; padding: 0 16px !important; outline: none !important;
+    }
+    .popup-ml-form input[type="email"]:focus { border-color: var(--amber) !important; }
+    .popup-ml-form input[type="email"]::placeholder { color: rgba(148,163,184,0.7) !important; }
+    .popup-ml-form .ml-form-embedSubmit { margin: 0 !important; padding: 0 !important; }
+    .popup-ml-form .ml-form-embedSubmit button.primary {
+      height: 48px !important; padding: 0 20px !important;
+      background: var(--amber) !important; color: var(--black) !important;
+      font-family: 'Barlow Condensed', sans-serif !important; font-size: 14px !important;
+      font-weight: 800 !important; letter-spacing: 0.1em !important; text-transform: uppercase !important;
+      border: none !important; border-radius: 0 6px 6px 0 !important; cursor: pointer !important; white-space: nowrap !important;
+    }
+    .popup-ml-form .ml-form-embedSubmit button.primary:hover { background: var(--amber-dk) !important; }
+    .popup-ml-form .ml-form-successBody { display: none !important; }
+    .popup-ml-form .ml-form-checkboxRow,
+    .popup-ml-form .ml-form-embedPermissions,
+    .popup-ml-form .ml-form-align-center:not(:has(input)) { display: none !important; }
+    @media (max-width: 680px) {
+      .popup-ml-form .ml-form-embedBody { flex-direction: column !important; }
+      .popup-ml-form input[type="email"] { border-right: 1.5px solid rgba(255,255,255,0.13) !important; border-radius: 6px !important; }
+      .popup-ml-form .ml-form-embedSubmit button.primary { border-radius: 6px !important; margin-top: 8px !important; width: 100% !important; }
+    }
   </style>
 <script>
 (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
@@ -2512,30 +2548,11 @@ ml('account', '2448027');
             </li>
           </ul>
 
-          <form id="popupForm">
-            <div class="popup-field">
-              <input
-                type="email"
-                id="popupEmail"
-                name="email"
-                data-fs-field
-                placeholder="your@email.com"
-                required
-                autocomplete="email"
-                aria-label="Your email address"
-              >
-              <button type="submit" class="btn-primary" data-fs-submit-btn>
-                Send It to Me
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
-            </div>
-            <span data-fs-error="email" class="popup-error-msg"></span>
-            <span data-fs-error class="popup-error-msg"></span>
-            <p class="popup-fine">Free. No spam. Unsubscribe any time.</p>
-          </form>
+          <div class="ml-embedded popup-ml-form" data-form="koGAMk"></div>
+          <p class="popup-fine" style="margin-top:10px">Free. No spam. Unsubscribe any time.</p>
 
-          <!-- Success state: shown by @formspree/ajax on submission -->
-          <div class="popup-success" id="popupSuccess" data-fs-success aria-live="polite">
+          <!-- Success state: shown when MailerLite confirms subscription -->
+          <div class="popup-success" id="popupSuccess" aria-live="polite">
             <div class="popup-success-check" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
@@ -2598,7 +2615,8 @@ ml('account', '2448027');
         overlay.classList.add('open');
         overlay.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
-        document.getElementById('popupEmail').focus();
+        const emailInput = overlay.querySelector('input[type="email"]');
+        if (emailInput) emailInput.focus();
       };
 
       window.closeLeadPopup = function() {
@@ -2640,20 +2658,15 @@ ml('account', '2448027');
       });
     })();
 
-    // Set bp_subscribed when Formspree shows the success state
+    // Show custom success state when MailerLite confirms subscription in the popup
     new MutationObserver(function() {
-      if (document.getElementById('popupSuccess').style.display !== 'none') {
+      const mlSuccess = document.querySelector('#leadPopup .ml-form-successBody');
+      if (mlSuccess && getComputedStyle(mlSuccess).display !== 'none') {
         localStorage.setItem('bp_subscribed', '1');
+        document.getElementById('popupSuccess').style.display = 'flex';
       }
-    }).observe(document.getElementById('popupSuccess'), { attributes: true, attributeFilter: ['style'] });
+    }).observe(document.getElementById('leadPopup'), { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
   </script>
-
-  <!-- Formspree Ajax -->
-  <script>
-    window.formspree = window.formspree || function() { (formspree.q = formspree.q || []).push(arguments); };
-    formspree('initForm', { formElement: '#popupForm', formId: 'xzdqlgal' });
-  </script>
-  <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 
 </body>
 </html>
