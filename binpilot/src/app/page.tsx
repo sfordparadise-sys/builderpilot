@@ -479,48 +479,54 @@ export default function BinPilotPage() {
         </div>
       </section>
 
-      {/* ── Before/After ── */}
+      {/* ── Illustrated process strip ── */}
+      <section className="py-16 max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10" data-reveal>
+          <h2 className="text-3xl sm:text-4xl font-black mb-3">The 200°F process</h2>
+          <p className="text-slate-400">Five steps. You do exactly none of them.</p>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" data-reveal>
+          {[
+            { img: '/process/1-pretreat.webp', label: 'Pre-treat' },
+            { img: '/process/2-scrub.webp',    label: 'Scrub' },
+            { img: '/process/3-rinse.webp',    label: 'Rinse' },
+            { img: '/process/4-pressure.webp', label: '200°F wash' },
+            { img: '/process/5-spotless.webp', label: 'Spotless' },
+          ].map((s, i) => (
+            <div key={s.label} className="text-center">
+              <div className="rounded-2xl bg-white border border-white/10 p-2 mb-3 aspect-square flex items-center justify-center overflow-hidden">
+                <img src={s.img} alt={s.label} loading="lazy" className="w-full h-full object-contain" />
+              </div>
+              <span className="text-xs font-black text-teal-400 tracking-widest">STEP {i + 1}</span>
+              <p className="text-sm font-bold text-slate-200">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Real before/after gallery ── */}
       <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12" data-reveal>
           <h2 className="text-3xl sm:text-4xl font-black mb-3">See the difference</h2>
-          <p className="text-slate-400">Real before &amp; after photos coming soon. You won&apos;t need convincing once you smell your bin.</p>
+          <p className="text-slate-400 max-w-xl mx-auto">Real bins, real homes. The same bin — before, and after our 200°F sanitizing clean.</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-5" data-reveal>
-          <div className="rounded-2xl overflow-hidden border border-red-500/20 bg-white/[0.02]">
-            <div className="bg-red-500/10 px-5 py-3 flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-              <span className="text-red-400 font-black text-xs tracking-widest">BEFORE — YOUR BIN, PROBABLY</span>
-            </div>
-            <div className="aspect-[4/3] relative flex items-center justify-center p-8 text-center">
-              {/* Drop a real photo at /before.jpg and it replaces this placeholder automatically. */}
-              <img src="/before.jpg" alt="A dirty bin before cleaning" loading="lazy"
-                className="absolute inset-0 z-10 w-full h-full object-cover"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
-              <div>
-                <span className="text-5xl block mb-4">🤢</span>
-                <p className="text-slate-500 text-sm leading-relaxed">Mould, maggots, mystery liquid, a smell that follows you inside, and at least one raccoon fingerprint.</p>
-                <p className="mt-4 text-slate-700 text-xs italic">Your photo here</p>
+        <div className="grid sm:grid-cols-2 gap-5">
+          {[
+            { src: '/photos/ba-1-blue-black.jpeg', cap: 'Recycling & garbage bins — caked-on gunk gone in a single pass.' },
+            { src: '/photos/ba-3-green.jpeg',      cap: 'Green bin — months of rotting organics, lifted right out.' },
+            { src: '/photos/ba-4-green.jpeg',      cap: 'Years of buildup sanitized back to factory-clean.' },
+            { src: '/photos/ba-2-green.jpeg',      cap: 'No scrubbing, no smell — just a bin you can stand next to.' },
+          ].map((p) => (
+            <figure key={p.src} data-reveal className="rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+              <div className="relative">
+                <img src={p.src} alt="A bin shown before and after a 200°F sanitizing clean" loading="lazy" className="w-full h-auto block" />
+                <span className="absolute top-3 left-3 bg-[#04080f]/80 backdrop-blur-sm border border-white/15 text-white text-[10px] font-black tracking-widest px-2.5 py-1 rounded">BEFORE → AFTER</span>
               </div>
-            </div>
-          </div>
-          <div className="rounded-2xl overflow-hidden border border-teal-500/20 bg-white/[0.02]">
-            <div className="bg-teal-500/10 px-5 py-3 flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-teal-500" />
-              <span className="text-teal-400 font-black text-xs tracking-widest">AFTER — 200°F LATER</span>
-            </div>
-            <div className="aspect-[4/3] relative flex items-center justify-center p-8 text-center">
-              {/* Drop a real photo at /after.jpg and it replaces this placeholder automatically. */}
-              <img src="/after.jpg" alt="The same bin sparkling clean after a 200°F wash" loading="lazy"
-                className="absolute inset-0 z-10 w-full h-full object-cover"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
-              <div>
-                <span className="text-5xl block mb-4">✨</span>
-                <p className="text-slate-400 text-sm leading-relaxed">Sanitized. Deodorized. Raccoon-rejected. Done at your curb while you were doing literally anything else.</p>
-                <p className="mt-4 text-slate-700 text-xs italic">Your photo here</p>
-              </div>
-            </div>
-          </div>
+              <figcaption className="px-5 py-3.5 text-sm text-slate-400">{p.cap}</figcaption>
+            </figure>
+          ))}
         </div>
+        <p className="text-center text-xs text-slate-600 mt-6">Actual results from bins we&apos;ve cleaned. Your bin&apos;s glow-up is one tap away.</p>
       </section>
 
       {/* ── Fun facts ── */}
