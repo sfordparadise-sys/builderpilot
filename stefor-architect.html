@@ -1638,15 +1638,18 @@ const PROCESS_TEMPLATE = [
   {n:"Finishes & Handover",  days:21, blurb:"Drywall, paint, fixtures, flooring, trim — final inspection & walkthrough."}
 ];
 
-/* ---------- Default selections (Design Decision Schedule) ---------- */
+/* ---------- Default selections (Design Decision Schedule) ----------
+   Basement-focused defaults grouped by category so a homeowner sees a
+   logical, relevant list instead of a whole-home/exterior catalog. */
 const SELECTION_TEMPLATE = [
-  ["Roofing & Waterproofing",["Asphalt Shingles","Metal & Flashing","Gutters & Downspouts","Chimney Caps"]],
-  ["Exterior Finishes",["Brick & Stone Veneer","Retaining Walls & Window Wells","Stucco Colour","Siding","Stain & Paint Colours","Concrete Flatwork","Stairs & Railings"]],
-  ["Windows & Doors",["Windows & Glass Doors","Front Entry Door","Exterior Doors","Garage Doors","Interior Doors","Door Hardware"]],
-  ["Rough-In & Mechanical",["Fireplace Boxes","Fireplace Surrounds","HVAC Options","Central Vac System","Insulation","Drywall Corners & Finish"]],
-  ["Plumbing & Electrical",["Plumbing Fixtures","Bath Hardware","Electrical Design","Electrical Fixtures","Audio / Network / Home Automation"]],
-  ["Cabinetry & Millwork",["Cabinetry","Appliances","Countertops","Ceiling Details","Interior Trim","Closet Organization Systems","Interior Stairs & Railings"]],
-  ["Interior Finishes",["Tile","Hardwood","Carpet","Specialty Flooring","Garage Epoxy","Interior Paint Colours","Shower Doors","Mirrors"]]
+  ["Flooring",["Luxury Vinyl / Laminate","Carpet & Underlay","Bathroom / Laundry Tile","Stair Treads"]],
+  ["Walls & Ceilings",["Wall Paint Colours","Trim & Baseboard Style","Ceiling (Drywall vs Drop)","Accent / Feature Wall"]],
+  ["Doors & Hardware",["Interior Doors","Door Hardware & Handles","Closet Doors"]],
+  ["Lighting & Electrical",["Pot-Light Layout","Light Fixtures","Switches & Dimmers","Data / TV / Network"]],
+  ["Bathroom",["Vanity & Countertop","Sink & Faucet","Toilet","Shower / Tub & Glass","Wall & Floor Tile","Bath Accessories"]],
+  ["Kitchenette / Wet Bar",["Cabinetry","Countertop","Bar Sink & Faucet","Appliances (allowance)"]],
+  ["Storage & Millwork",["Closet Organizers","Built-in Shelving","Laundry Counter & Sink"]],
+  ["Comfort & Systems",["HVAC / Heating Option","Insulation Upgrade","Sump / Drainage","Fireplace (optional)"]]
 ];
 const SEL_STATUS=["Not started","Researching","Presented","Selected","Ordered","Installed"];
 const SEL_BALL=["Client","Stefor","Vendor"];
@@ -1677,7 +1680,7 @@ function blankState(){
       intro:"Thank you for the opportunity to prepare this proposal. The following outlines the scope of work, investment, and schedule for your project, built to the Ontario Building Code with licensed trades and inspected at every hidden stage."},
     projName:"",
     rooms:SAMPLE_ROOMS.map((r,i)=>({id:"r"+i,...r})),
-    estimate:{budgets:est, custom:[], contPct:10, taxPct:13},
+    estimate:{budgets:est, notes:{}, custom:[], contPct:10, taxPct:13},
     schedule:{start:today(), phases:PROCESS_TEMPLATE.map(p=>({name:p.n,days:p.days,blurb:p.blurb}))},
     selections:buildSelections(),
     changeOrders:[],
@@ -1930,6 +1933,7 @@ document.getElementById("toggleRoof").addEventListener("click",e=>{
 
 /* ===================== ESTIMATE ===================== */
 function renderEstimate(){
+  if(!state.estimate.notes)state.estimate.notes={};
   const body=document.getElementById("estBody");body.innerHTML="";
   ESTIMATE_TEMPLATE.forEach(g=>{
     const [code,name,items]=g;
@@ -1940,13 +1944,18 @@ function renderEstimate(){
     items.forEach(it=>{
       const [ic,d,s]=it;const row=document.createElement("tr");
       row.innerHTML=`<td class="code">${ic}</td>
-        <td class="desc"><div class="d">${esc(d)}</div><div class="s">${esc(s)}</div></td>
+        <td class="desc"><div class="d">${esc(d)}</div><div class="s">${esc(s)}</div>
+          <textarea class="scopenote" data-code="${ic}" rows="1" placeholder="What you're doing for this line — appears on the proposal" style="width:100%;margin-top:5px;font-size:12px;line-height:1.35;border:1px dashed #cdd3da;border-radius:5px;padding:4px 7px;resize:vertical;color:#2b2f33;background:#fafbfc">${esc(state.estimate.notes[ic]||"")}</textarea></td>
         <td class="money"><input class="moneyinp" data-code="${ic}" type="number" min="0" step="50" value="${state.estimate.budgets[ic]||""}" placeholder="0"/></td>`;
       body.appendChild(row);
     });
   });
   body.querySelectorAll(".moneyinp").forEach(inp=>{
     inp.addEventListener("input",()=>{state.estimate.budgets[inp.dataset.code]=Number(inp.value)||0;recalcEstimate();save();});
+  });
+  body.querySelectorAll(".scopenote").forEach(t=>{
+    const grow=()=>{t.style.height="auto";t.style.height=Math.min(t.scrollHeight,160)+"px";};grow();
+    t.addEventListener("input",()=>{state.estimate.notes[t.dataset.code]=t.value;grow();save();});
   });
   document.getElementById("contPct").value=state.estimate.contPct;
   document.getElementById("taxPct").value=state.estimate.taxPct;
@@ -2207,9 +2216,18 @@ function renderProposal(){
   const cont=sub*(state.estimate.contPct||0)/100, tax=(sub+cont)*(state.estimate.taxPct||0)/100, total=sub+cont+tax;
   const totArea=state.rooms.reduce((s,r)=>s+r.w*r.l,0);
 
-  // scope rows: only groups with a value
+  // scope rows: group header + itemized work (only lines with a budget)
+  const notes=state.estimate.notes||{};
   let scopeRows="";
-  ESTIMATE_TEMPLATE.forEach(g=>{const t=groupTotal(g[0]);if(t>0)scopeRows+=`<tr><td>${g[0]}</td><td>${esc(g[1])}</td><td class="r">${money(t)}</td></tr>`;});
+  ESTIMATE_TEMPLATE.forEach(g=>{
+    const t=groupTotal(g[0]);if(t<=0)return;
+    scopeRows+=`<tr><td><b>${g[0]}</b></td><td><b>${esc(g[1])}</b></td><td class="r"><b>${money(t)}</b></td></tr>`;
+    g[2].forEach(it=>{
+      const amt=Number(state.estimate.budgets[it[0]])||0;if(amt<=0)return;
+      const desc=(notes[it[0]]&&notes[it[0]].trim())?notes[it[0]]:it[2];
+      scopeRows+=`<tr><td style="color:#9aa0a6;font-size:12px">${it[0]}</td><td style="padding-left:16px;color:#444">${esc(it[1])} — ${esc(desc)}</td><td class="r" style="color:#666">${money(amt)}</td></tr>`;
+    });
+  });
   if(!scopeRows)scopeRows=`<tr><td colspan="3" style="color:#888">No costs entered yet — fill in the Scope &amp; Estimate tab.</td></tr>`;
 
   // schedule
@@ -2249,26 +2267,43 @@ function renderProposal(){
     <h3>Scope of Work &amp; Investment</h3>
     <table><thead><tr><th style="width:46px">Code</th><th>Cost code</th><th class="r">Budget</th></tr></thead>
       <tbody>${scopeRows}</tbody></table>
-    <div style="max-width:320px;margin-left:auto;margin-top:6px">
+    ${sub>0?`<div style="max-width:340px;margin-left:auto;margin-top:6px">
       <table>
         <tr><td>Sub-total (hard costs)</td><td class="r">${money(sub)}</td></tr>
         <tr><td>Contingency (${state.estimate.contPct}%)</td><td class="r">${money(cont)}</td></tr>
         <tr><td>HST (${state.estimate.taxPct}%)</td><td class="r">${money(tax)}</td></tr>
       </table>
       <div class="totline"><span>Total Investment</span><span>${money(total)}</span></div>
-    </div>
+      <p style="font-size:11px;color:#777;margin:6px 0 0">Includes materials and labour as described in the Scope of Work above. Exclusions are listed in your contract.</p>
+    </div>`:`<p class="note" style="margin-top:8px">Investment figures are completed in the <b>Scope &amp; Estimate</b> tab before this proposal is issued to the client.</p>`}
 
     <h3>Schedule</h3>
-    <p style="font-size:13px">Estimated duration <b>${totDays} days (≈ ${Math.round(totDays/7)} weeks)</b>. Target start ${esc(fmtDate(start))}, estimated completion <b>${esc(fmtDate(end))}</b>. Dates exclude weekends, holidays and inspection lead times.</p>
+    <p style="font-size:13px">Estimated duration <b>${totDays} working days (≈ ${Math.round(totDays/7)} weeks)</b>. Target start ${esc(fmtDate(start))}, estimated completion <b>${esc(fmtDate(end))}</b>. All durations are approximate and may shift based on inspections and client selections; dates exclude weekends, holidays and inspection lead times.</p>
 
     ${(()=>{const out=state.selections.filter(s=>!s.done);if(!out.length)return "";
-      return `<h3>Outstanding Selections</h3><p style="font-size:13px">${out.length} finish decision(s) still to confirm. Early items: ${esc(out.slice(0,6).map(s=>s.item).join(", "))}${out.length>6?"…":""}. We'll walk these with you on the decision schedule so nothing holds up the build.</p>`;})()}
+      const byGroup={};out.forEach(s=>{(byGroup[s.group||"Other"]=byGroup[s.group||"Other"]||[]).push(s.item);});
+      const groups=Object.keys(byGroup).map(g=>`<tr><td style="white-space:nowrap;font-weight:700;vertical-align:top">${esc(g)}</td><td>${esc(byGroup[g].join(", "))}</td></tr>`).join("");
+      return `<h3>Outstanding Selections</h3>
+        <p style="font-size:13px">${out.length} finish decision(s) still to confirm — this list updates as we finalize your selections. We'll review these together in a Selections Meeting before anything is ordered, so nothing holds up the build.</p>
+        <table>${groups}</table>`;})()}
 
-    <div class="note"><b>Quality &amp; compliance:</b> All work follows the Ontario Building Code. Electrical is completed by a licensed contractor and filed with the ESA; plumbing and framing are built to code and inspected at rough-in. The walls don't close until the hidden work passes — that protects you long after we're gone.</div>
+    <div class="note"><b>Quality &amp; compliance:</b> All work follows the Ontario Building Code. Electrical is completed by a licensed contractor and filed with the ESA; plumbing and framing are built to code and inspected at rough-in. The walls don't close until the hidden work passes — in short, everything hidden in the walls and ceiling is inspected before we close it up, which protects you long after we're gone.</div>
 
+    <h3>Assumptions &amp; Exclusions</h3>
+    <ul style="font-size:13px;margin:6px 0 0;padding-left:18px">
+      <li>Existing structure, foundation and framing are assumed sound and code-compliant unless noted.</li>
+      <li>No hazardous materials (asbestos, mould, knob-and-tube) are present; remediation, if found, is priced separately.</li>
+      <li>Pricing assumes no major design changes after the permit is issued; changes are handled by signed Change Order.</li>
+      <li>Permit fees, development charges and utility upgrades are excluded unless listed in the Scope of Work.</li>
+      <li>Allowance items (where shown) are estimates; final cost is confirmed once selections are made.</li>
+    </ul>
+
+    <p style="font-size:12px;color:#555;margin-top:14px">This proposal forms part of your construction contract and is subject to the terms and conditions therein.</p>
+
+    <h3>Signatures</h3>
     <div class="sign">
-      <div class="l">Client signature &amp; date</div>
-      <div class="l">Stefor Group Inc. &amp; date</div>
+      <div class="l">Client name &amp; signature&nbsp;&nbsp;/&nbsp;&nbsp;Date</div>
+      <div class="l">Stefor Group Inc. representative &amp; signature&nbsp;&nbsp;/&nbsp;&nbsp;Date</div>
     </div>
 
     <div class="foot"><span>STEFOR GROUP INC. | General Contracting &amp; Renovation</span><span>Building Success, One Project at a Time</span></div>
