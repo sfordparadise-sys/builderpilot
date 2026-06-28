@@ -234,6 +234,11 @@
       <h2 class="section">Project Information</h2>
       <p class="sub">The basics that appear on the proposal header.</p>
       <div class="card">
+        <div style="margin-bottom:14px">
+          <label class="f">Project type</label>
+          <select id="m_ptype" class="inp"></select>
+          <div class="sub" style="margin-top:4px">From a small handyman repair up to a full renovation. Switching loads the matching estimate worksheet, schedule and selections.</div>
+        </div>
         <div class="grid2">
           <div><label class="f">Client name</label><input id="m_client" class="inp" placeholder="e.g. John & Jane Smith"/></div>
           <div><label class="f">Project title</label><input id="m_title" class="inp" placeholder="e.g. Basement Renovation"/></div>
@@ -1523,7 +1528,7 @@
 "use strict";
 
 /* ---------- Default estimate template (25 cost codes from Stefor sheet) ---------- */
-const ESTIMATE_TEMPLATE = [
+let ESTIMATE_TEMPLATE = [
   ["1","PERMITS & PROFESSIONAL FEES",[
     ["1.01","Building Permit","Apply for and obtain municipal building permit for basement renovation"],
     ["1.02","Structural Engineer","Beam/lintel design & inspection for new window openings if required ($ allowance)"],
@@ -1630,7 +1635,7 @@ const ESTIMATE_TEMPLATE = [
 ];
 
 /* ---------- Default 5-stage process (from Stefor "Your Renovation Process") ---------- */
-const PROCESS_TEMPLATE = [
+let PROCESS_TEMPLATE = [
   {n:"Walkthrough & Plan",   days:5,  blurb:"Confirm layout, finishes, budget and scope in writing."},
   {n:"Permits & Setup",      days:15, blurb:"Pull permit, line up trades, protect the area & set up dust control."},
   {n:"Demo & Underground Plumbing", days:7, blurb:"Demo, break floor, run new drain/vent, inspect, pour back."},
@@ -1641,7 +1646,7 @@ const PROCESS_TEMPLATE = [
 /* ---------- Default selections (Design Decision Schedule) ----------
    Basement-focused defaults grouped by category so a homeowner sees a
    logical, relevant list instead of a whole-home/exterior catalog. */
-const SELECTION_TEMPLATE = [
+let SELECTION_TEMPLATE = [
   ["Flooring",["Luxury Vinyl / Laminate","Carpet & Underlay","Bathroom / Laundry Tile","Stair Treads"]],
   ["Walls & Ceilings",["Wall Paint Colours","Trim & Baseboard Style","Ceiling (Drywall vs Drop)","Accent / Feature Wall"]],
   ["Doors & Hardware",["Interior Doors","Door Hardware & Handles","Closet Doors"]],
@@ -1660,7 +1665,7 @@ function buildSelections(){
   return out;
 }
 
-const SAMPLE_ROOMS = [
+let SAMPLE_ROOMS = [
   {name:"Great Room",      x:2,  y:2,  w:18, l:14, h:8, color:"#cfe3f2"},
   {name:"Storage Closet",  x:2,  y:16, w:6,  l:5,  h:8, color:"#e7dcc6"},
   {name:"Storage Area",    x:8,  y:16, w:8,  l:5,  h:8, color:"#e7dcc6"},
@@ -1668,16 +1673,207 @@ const SAMPLE_ROOMS = [
   {name:"Laundry",         x:21, y:9,  w:8,  l:5,  h:8, color:"#f1dede"}
 ];
 
+/* ====================================================================
+   PROJECT TYPES — from small handyman repairs up to full renovations.
+   Each type carries its own estimate worksheet, process/schedule and
+   selections. The active set is loaded into the four template vars above
+   by applyProjectType(). The original basement data is the baseline.
+   ==================================================================== */
+const BASEMENT_ESTIMATE=ESTIMATE_TEMPLATE, BASEMENT_PROCESS=PROCESS_TEMPLATE,
+      BASEMENT_SELECTIONS=SELECTION_TEMPLATE, BASEMENT_ROOMS=SAMPLE_ROOMS;
+
+/* ---- Handyman / small repair ---- */
+const HANDYMAN_ESTIMATE=[
+  ["1","LABOUR",[
+    ["1.01","Service Call / Diagnosis","Trip charge, assessment and diagnosis of the issue"],
+    ["1.02","Repair Labour","Labour to complete the repair"],
+    ["1.03","Helper / Second Hand","Extra labour where a two-person task is required"]]],
+  ["2","MATERIALS & PARTS",[
+    ["2.01","Parts & Materials","Replacement parts, fittings and materials"],
+    ["2.02","Consumables","Caulk, fasteners, sealants and small supplies"],
+    ["2.03","Pickup / Delivery","Material pickup or delivery if required"]]],
+  ["3","OTHER",[
+    ["3.01","Disposal","Haul-away of old parts / debris"],
+    ["3.02","Minor Permit","Permit if required for the repair"]]]];
+const HANDYMAN_PROCESS=[
+  {n:"Assess & Quote",days:1,blurb:"Confirm the problem, scope and price."},
+  {n:"Schedule & Parts",days:2,blurb:"Source any parts and book the visit."},
+  {n:"Repair & Test",days:1,blurb:"Complete the repair, test and clean up."}];
+const HANDYMAN_SEL=[
+  ["Fixtures & Parts",["Faucet / Fixture Model","Finish / Colour","Replacement Part Spec"]]];
+const HANDYMAN_ROOMS=[{name:"Work Area",x:2,y:2,w:10,l:10,h:8,color:"#e7dcc6"}];
+
+/* ---- Bathroom renovation ---- */
+const BATH_ESTIMATE=[
+  ["1","PERMITS & FEES",[
+    ["1.01","Building / Plumbing Permit","Permit for bathroom renovation if required"],
+    ["1.02","ESA Electrical Permit","Electrical permit filed with the ESA by licensed contractor"]]],
+  ["2","GENERAL",[
+    ["2.01","Project Management","Scheduling, coordination and client communication"],
+    ["2.02","Skilled Labour","Carpentry and skilled trades"],
+    ["2.03","Protection & Cleanup","Floor/area protection, dust control, daily cleanup"]]],
+  ["3","DEMOLITION & DISPOSAL",[
+    ["3.01","Strip-Out","Remove existing tile, vanity, tub/shower, toilet and fixtures"],
+    ["3.02","Disposal","Bin / haul-away of demolition debris"]]],
+  ["4","ROUGH-IN",[
+    ["4.01","Plumbing Rough-In","Relocate/replace supply and drain lines per layout"],
+    ["4.02","Electrical Rough-In","New circuits, pot lights, fan, GFCI, vanity lighting"],
+    ["4.03","Exhaust Fan & Venting","Supply and vent bath exhaust fan to exterior"],
+    ["4.04","Framing & Blocking","Niche, bench, grab-bar blocking, wall adjustments"]]],
+  ["5","WATERPROOFING & TILE",[
+    ["5.01","Waterproofing","Membrane to wet areas (Schluter / equivalent)"],
+    ["5.02","Floor Tile","Supply allowance + install floor tile"],
+    ["5.03","Wall / Shower Tile","Supply allowance + install wall/shower tile"]]],
+  ["6","FIXTURES & FINISHES",[
+    ["6.01","Vanity & Countertop","Install vanity, top and faucet"],
+    ["6.02","Toilet","Supply and install toilet"],
+    ["6.03","Tub / Shower & Glass","Tub or shower base, valve, trim and glass"],
+    ["6.04","Accessories","Mirror, towel bars, paper holder, hooks"],
+    ["6.05","Paint","Prime and paint walls, ceiling and trim"]]]];
+const BATH_PROCESS=[
+  {n:"Design & Selections",days:7,blurb:"Confirm layout, fixtures, tile and budget."},
+  {n:"Permit & Order",days:10,blurb:"Pull permit; order tile, vanity and fixtures."},
+  {n:"Demo & Rough-In",days:5,blurb:"Strip out; plumbing/electrical rough-in; inspect."},
+  {n:"Waterproof & Tile",days:6,blurb:"Membrane, floor and wall tile, grout."},
+  {n:"Finishes & Handover",days:5,blurb:"Vanity, fixtures, glass, paint, final walkthrough."}];
+const BATH_SEL=[
+  ["Tile",["Floor Tile","Wall / Shower Tile","Accent / Niche Tile","Grout Colour"]],
+  ["Fixtures",["Vanity & Top","Faucet","Toilet","Tub / Shower Base","Shower Valve & Trim","Glass"]],
+  ["Finishes",["Wall Paint","Lighting","Exhaust Fan","Mirror & Accessories"]]];
+const BATH_ROOMS=[{name:"Bathroom",x:2,y:2,w:8,l:7,h:8,color:"#d6efe0"}];
+
+/* ---- Kitchen renovation ---- */
+const KITCHEN_ESTIMATE=[
+  ["1","PERMITS & FEES",[
+    ["1.01","Building / Plumbing Permit","Permit for kitchen renovation if required"],
+    ["1.02","ESA Electrical Permit","Electrical permit filed with the ESA"]]],
+  ["2","GENERAL",[
+    ["2.01","Project Management","Scheduling, coordination and communication"],
+    ["2.02","Skilled Labour","Carpentry and skilled trades"],
+    ["2.03","Protection & Cleanup","Protection, dust control, daily cleanup"]]],
+  ["3","DEMOLITION & DISPOSAL",[
+    ["3.01","Strip-Out","Remove existing cabinets, counters, flooring and fixtures"],
+    ["3.02","Disposal","Bin / haul-away of debris"]]],
+  ["4","ROUGH-IN",[
+    ["4.01","Plumbing Rough-In","Relocate sink/dishwasher/water lines per layout"],
+    ["4.02","Electrical Rough-In","New circuits, pot lights, under-cabinet, appliance outlets"],
+    ["4.03","Wall / Structural","Remove/modify wall, add beam if required ($ allowance)"],
+    ["4.04","HVAC / Venting","Range-hood venting to exterior"]]],
+  ["5","CABINETRY & SURFACES",[
+    ["5.01","Cabinetry","Supply allowance + install kitchen cabinetry"],
+    ["5.02","Countertops","Template, supply and install countertops"],
+    ["5.03","Backsplash","Supply allowance + install backsplash tile"]]],
+  ["6","FINISHES",[
+    ["6.01","Flooring","Supply allowance + install kitchen flooring"],
+    ["6.02","Appliance Install","Set and connect appliances"],
+    ["6.03","Paint","Prime and paint walls, ceiling and trim"],
+    ["6.04","Plumbing / Light Fixtures","Install sink, faucet and light fixtures"]]]];
+const KITCHEN_PROCESS=[
+  {n:"Design & Selections",days:10,blurb:"Confirm layout, cabinets, counters and budget."},
+  {n:"Permit & Order",days:21,blurb:"Pull permit; order cabinets, counters, appliances."},
+  {n:"Demo & Rough-In",days:5,blurb:"Strip out; plumbing/electrical/structural rough-in."},
+  {n:"Cabinets & Counters",days:7,blurb:"Install cabinetry; template and install counters."},
+  {n:"Finishes & Handover",days:6,blurb:"Backsplash, flooring, paint, appliances, walkthrough."}];
+const KITCHEN_SEL=[
+  ["Cabinetry & Surfaces",["Cabinet Door & Colour","Hardware","Countertop","Backsplash"]],
+  ["Appliances & Fixtures",["Appliance Package","Sink & Faucet","Lighting"]],
+  ["Finishes",["Flooring","Wall Paint"]]];
+const KITCHEN_ROOMS=[{name:"Kitchen",x:2,y:2,w:14,l:12,h:8,color:"#f3e8cf"}];
+
+/* ---- Deck build ---- */
+const DECK_ESTIMATE=[
+  ["1","PERMITS & DESIGN",[
+    ["1.01","Building Permit","Deck permit and drawings if required"],
+    ["1.02","Locates","Ontario One Call utility locates"]]],
+  ["2","SITE & FOOTINGS",[
+    ["2.01","Layout & Excavation","Lay out footings and excavate"],
+    ["2.02","Footings / Piles","Concrete footings or helical / screw piles"],
+    ["2.03","Disposal","Spoil and debris removal"]]],
+  ["3","STRUCTURE",[
+    ["3.01","Posts & Beams","Pressure-treated posts and beams"],
+    ["3.02","Joists & Framing","Ledger, joists, hangers and blocking"],
+    ["3.03","Hardware","Connectors, fasteners and flashing"]]],
+  ["4","DECKING & FINISHES",[
+    ["4.01","Decking","Supply allowance + install decking boards"],
+    ["4.02","Railings","Supply and install railing system"],
+    ["4.03","Stairs","Build stairs and landing"],
+    ["4.04","Skirting / Fascia","Fascia and skirting as required"]]],
+  ["5","EXTRAS",[
+    ["5.01","Lighting / Electrical","Deck lighting or outlets ($ allowance)"],
+    ["5.02","Privacy / Pergola","Privacy screen or pergola ($ allowance)"]]]];
+const DECK_PROCESS=[
+  {n:"Design & Permit",days:10,blurb:"Confirm size and materials; drawings and permit."},
+  {n:"Locates & Footings",days:3,blurb:"Utility locates; excavate and set footings."},
+  {n:"Framing",days:4,blurb:"Posts, beams, joists and structural inspection."},
+  {n:"Decking & Railings",days:5,blurb:"Lay decking; build stairs and railings."},
+  {n:"Finish & Handover",days:2,blurb:"Lighting/extras, cleanup and walkthrough."}];
+const DECK_SEL=[
+  ["Decking",["Board Material","Board Colour","Fascia / Skirting"]],
+  ["Railings & Stairs",["Railing Style","Railing Colour","Stair Layout"]],
+  ["Extras",["Lighting","Privacy Screen / Pergola"]]];
+const DECK_ROOMS=[{name:"Deck",x:2,y:2,w:16,l:12,h:1,color:"#e7d3b0"}];
+
+/* ---- Shed / detached structure ---- */
+const SHED_ESTIMATE=[
+  ["1","PERMITS & DESIGN",[
+    ["1.01","Building Permit","Permit and drawings if over the size threshold"],
+    ["1.02","Locates","Utility locates"]]],
+  ["2","FOUNDATION",[
+    ["2.01","Site Prep","Clear and level the site; gravel base"],
+    ["2.02","Foundation","Slab, piers or skid foundation"]]],
+  ["3","STRUCTURE & ENVELOPE",[
+    ["3.01","Floor System","Pressure-treated floor framing and sheathing"],
+    ["3.02","Walls","Wall framing and sheathing"],
+    ["3.03","Roof","Roof framing, sheathing and shingles / metal"],
+    ["3.04","Siding & Trim","Exterior siding, trim and soffit"]]],
+  ["4","DOORS, WINDOWS & FINISH",[
+    ["4.01","Doors","Man-door and/or double doors"],
+    ["4.02","Windows","Windows as per plan"],
+    ["4.03","Paint / Stain","Exterior paint or stain"]]],
+  ["5","EXTRAS",[
+    ["5.01","Electrical","Light/outlets/sub-panel ($ allowance, by licensed contractor)"],
+    ["5.02","Ramp / Shelving","Ramp, loft or shelving ($ allowance)"]]]];
+const SHED_PROCESS=[
+  {n:"Design & Permit",days:10,blurb:"Confirm size, style and materials; permit if required."},
+  {n:"Site & Foundation",days:3,blurb:"Prep the site and build the foundation."},
+  {n:"Framing & Envelope",days:5,blurb:"Floor, walls, roof and siding."},
+  {n:"Doors, Windows & Finish",days:3,blurb:"Install doors/windows, trim and paint."},
+  {n:"Extras & Handover",days:2,blurb:"Electrical/extras, cleanup and walkthrough."}];
+const SHED_SEL=[
+  ["Structure",["Siding Material","Siding Colour","Roofing Type & Colour","Trim Colour"]],
+  ["Openings",["Door Style","Window Package"]],
+  ["Extras",["Electrical Package","Shelving / Loft"]]];
+const SHED_ROOMS=[{name:"Shed",x:2,y:2,w:12,l:10,h:9,color:"#d9c7a3"}];
+
+const PROJECT_TYPES={
+  handyman:{label:"Handyman / Small Repair", est:HANDYMAN_ESTIMATE, proc:HANDYMAN_PROCESS, sel:HANDYMAN_SEL, rooms:HANDYMAN_ROOMS},
+  bathroom:{label:"Bathroom Renovation",     est:BATH_ESTIMATE,     proc:BATH_PROCESS,     sel:BATH_SEL,     rooms:BATH_ROOMS},
+  kitchen: {label:"Kitchen Renovation",      est:KITCHEN_ESTIMATE,  proc:KITCHEN_PROCESS,  sel:KITCHEN_SEL,  rooms:KITCHEN_ROOMS},
+  deck:    {label:"Deck Build",              est:DECK_ESTIMATE,     proc:DECK_PROCESS,     sel:DECK_SEL,     rooms:DECK_ROOMS},
+  shed:    {label:"Shed / Detached Structure",est:SHED_ESTIMATE,    proc:SHED_PROCESS,     sel:SHED_SEL,     rooms:SHED_ROOMS},
+  basement:{label:"Basement Renovation",     est:BASEMENT_ESTIMATE, proc:BASEMENT_PROCESS, sel:BASEMENT_SELECTIONS, rooms:BASEMENT_ROOMS},
+  general: {label:"General / Custom (full worksheet)", est:BASEMENT_ESTIMATE, proc:BASEMENT_PROCESS, sel:BASEMENT_SELECTIONS, rooms:BASEMENT_ROOMS}
+};
+function applyProjectType(id){
+  const t=PROJECT_TYPES[id]||PROJECT_TYPES.basement;
+  ESTIMATE_TEMPLATE=t.est; PROCESS_TEMPLATE=t.proc; SELECTION_TEMPLATE=t.sel; SAMPLE_ROOMS=t.rooms;
+  return t;
+}
+const TYPE_LABELS=Object.keys(PROJECT_TYPES).map(k=>PROJECT_TYPES[k].label);
+
 /* ---------- State ---------- */
 const LS_KEY="stefor-architect-v1";
 let state=null, selectedRoomId=null, saveTimer=null;
 
-function blankState(){
+function blankState(type){
+  type=type||"basement";
+  const t=applyProjectType(type);
   const est={};
   ESTIMATE_TEMPLATE.forEach(g=>g[2].forEach(it=>est[it[0]]=0));
   return {
-    meta:{client:"",title:"Basement Renovation",address:"",date:today(),by:"Stefor Group Inc.",ver:"1",
-      intro:"Thank you for the opportunity to prepare this proposal. The following outlines the scope of work, investment, and schedule for your project, built to the Ontario Building Code with licensed trades and inspected at every hidden stage."},
+    projectType:type,
+    meta:{client:"",title:t.label,address:"",date:today(),by:"Stefor Group Inc.",ver:"1",
+      intro:"Thank you for the opportunity to prepare this proposal. The following outlines the scope of work, investment, and schedule for your project, built to the Ontario Building Code with licensed trades and inspected at every applicable stage."},
     projName:"",
     rooms:SAMPLE_ROOMS.map((r,i)=>({id:"r"+i,...r})),
     estimate:{budgets:est, notes:{}, custom:[], contPct:10, taxPct:13},
@@ -1697,7 +1893,7 @@ function save(){
   saveTimer=setTimeout(()=>{ try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){} },250);
 }
 function load(){
-  try{const raw=localStorage.getItem(LS_KEY); if(raw){state=JSON.parse(raw); return;}}catch(e){}
+  try{const raw=localStorage.getItem(LS_KEY); if(raw){state=JSON.parse(raw); applyProjectType(state.projectType||"basement"); return;}}catch(e){}
   state=blankState();
 }
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600);}
@@ -1726,6 +1922,27 @@ function bindMeta(){
   const pn=document.getElementById("projName");
   pn.value=state.projName||"";
   pn.addEventListener("input",()=>{state.projName=pn.value;save();});
+  const ps=document.getElementById("m_ptype");
+  if(ps){
+    ps.innerHTML=Object.keys(PROJECT_TYPES).map(k=>`<option value="${k}">${esc(PROJECT_TYPES[k].label)}</option>`).join("");
+    ps.value=state.projectType||"basement";
+    ps.onchange=()=>changeProjectType(ps.value);
+  }
+}
+function changeProjectType(id){
+  const t=PROJECT_TYPES[id];if(!t)return;
+  if(!confirm(`Switch to "${t.label}"?\n\nThis replaces the estimate worksheet, schedule and selections with the ${t.label} defaults. Your client info and cover note are kept. Export first if you want to save the current setup.`)){
+    document.getElementById("m_ptype").value=state.projectType||"basement";return;
+  }
+  state.projectType=id;applyProjectType(id);
+  const est={};ESTIMATE_TEMPLATE.forEach(g=>g[2].forEach(it=>est[it[0]]=0));
+  state.estimate.budgets=est;state.estimate.notes={};state.estimate.custom=[];
+  state.schedule.start=state.schedule.start||today();
+  state.schedule.phases=PROCESS_TEMPLATE.map(p=>({name:p.n,days:p.days,blurb:p.blurb}));
+  state.selections=buildSelections();
+  state.rooms=SAMPLE_ROOMS.map((r,i)=>({id:"r"+i,...r}));
+  if(!state.meta.title||TYPE_LABELS.includes(state.meta.title))state.meta.title=t.label;
+  hydrateAll();save();toast("Switched to "+t.label);
 }
 
 /* ===================== FLOOR PLAN ===================== */
@@ -2334,7 +2551,7 @@ document.getElementById("btnExport").addEventListener("click",()=>{
 document.getElementById("btnImport").addEventListener("click",()=>document.getElementById("fileInput").click());
 document.getElementById("fileInput").addEventListener("change",e=>{
   const f=e.target.files[0];if(!f)return;const rd=new FileReader();
-  rd.onload=()=>{try{const obj=JSON.parse(rd.result);state=Object.assign(blankState(),obj);hydrateAll();toast("Project imported");}
+  rd.onload=()=>{try{const obj=JSON.parse(rd.result);state=Object.assign(blankState(),obj);applyProjectType(state.projectType||"basement");hydrateAll();toast("Project imported");}
     catch(err){alert("That file could not be read as a project.");}};
   rd.readAsText(f);e.target.value="";
 });
@@ -2353,6 +2570,7 @@ window.addEventListener("resize",()=>{if(document.getElementById("tab-plan").cla
 
 load();
 // migrate older saves missing fields
+if(!state.projectType){state.projectType="basement";applyProjectType("basement");}
 if(!state.images)state.images={plan:null,view:null};
 if(!state.estimate)state.estimate={budgets:{},custom:[],contPct:10,taxPct:13};
 if(!state.selections)state.selections=buildSelections();
