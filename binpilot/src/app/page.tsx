@@ -33,6 +33,28 @@ export default function BinPilotPage() {
     setServiceDate(nextWednesday().toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric' }));
   }, []);
 
+  // Scroll-reveal: progressive enhancement. Adds .js-reveal so [data-reveal]
+  // elements fade up as they enter the viewport; if JS never runs, content
+  // stays fully visible (the class is only added here).
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add('js-reveal');
+    const els = Array.from(document.querySelectorAll('[data-reveal]'));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   const navLinks = [
     { label: 'The Problem', href: '#problem' },
     { label: 'Pricing', href: '#pricing' },
@@ -433,7 +455,7 @@ export default function BinPilotPage() {
       {/* ── How it works ── */}
       <section id="how-it-works" className="py-20 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
+          <div className="text-center mb-14" data-reveal>
             <h2 className="text-3xl sm:text-4xl font-black mb-3">How it works</h2>
             <p className="text-slate-400 max-w-xl mx-auto">From booking to spotless bins — and you lift exactly nothing.</p>
           </div>
@@ -459,17 +481,21 @@ export default function BinPilotPage() {
 
       {/* ── Before/After ── */}
       <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12" data-reveal>
           <h2 className="text-3xl sm:text-4xl font-black mb-3">See the difference</h2>
           <p className="text-slate-400">Real before &amp; after photos coming soon. You won&apos;t need convincing once you smell your bin.</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-5" data-reveal>
           <div className="rounded-2xl overflow-hidden border border-red-500/20 bg-white/[0.02]">
             <div className="bg-red-500/10 px-5 py-3 flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
               <span className="text-red-400 font-black text-xs tracking-widest">BEFORE — YOUR BIN, PROBABLY</span>
             </div>
-            <div className="aspect-[4/3] flex items-center justify-center p-8 text-center">
+            <div className="aspect-[4/3] relative flex items-center justify-center p-8 text-center">
+              {/* Drop a real photo at /before.jpg and it replaces this placeholder automatically. */}
+              <img src="/before.jpg" alt="A dirty bin before cleaning" loading="lazy"
+                className="absolute inset-0 z-10 w-full h-full object-cover"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
               <div>
                 <span className="text-5xl block mb-4">🤢</span>
                 <p className="text-slate-500 text-sm leading-relaxed">Mould, maggots, mystery liquid, a smell that follows you inside, and at least one raccoon fingerprint.</p>
@@ -482,7 +508,11 @@ export default function BinPilotPage() {
               <div className="w-2.5 h-2.5 rounded-full bg-teal-500" />
               <span className="text-teal-400 font-black text-xs tracking-widest">AFTER — 200°F LATER</span>
             </div>
-            <div className="aspect-[4/3] flex items-center justify-center p-8 text-center">
+            <div className="aspect-[4/3] relative flex items-center justify-center p-8 text-center">
+              {/* Drop a real photo at /after.jpg and it replaces this placeholder automatically. */}
+              <img src="/after.jpg" alt="The same bin sparkling clean after a 200°F wash" loading="lazy"
+                className="absolute inset-0 z-10 w-full h-full object-cover"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
               <div>
                 <span className="text-5xl block mb-4">✨</span>
                 <p className="text-slate-400 text-sm leading-relaxed">Sanitized. Deodorized. Raccoon-rejected. Done at your curb while you were doing literally anything else.</p>
@@ -496,7 +526,7 @@ export default function BinPilotPage() {
       {/* ── Fun facts ── */}
       <section className="py-20 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12" data-reveal>
             <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
               FROM THE BINPILOT FILES
             </div>
@@ -540,7 +570,7 @@ export default function BinPilotPage() {
       {/* ── FAQ ── */}
       <section id="faq" className="py-20 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
+          <div className="text-center mb-14" data-reveal>
             <h2 className="text-3xl sm:text-4xl font-black mb-3">Questions</h2>
             <p className="text-slate-400">Everything you need before you book.</p>
           </div>
@@ -554,6 +584,33 @@ export default function BinPilotPage() {
                 {openFaq === i && <div className="px-6 pb-5"><p className="text-slate-400 text-sm leading-relaxed">{f.a}</p></div>}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Meet Steve (local trust) ── */}
+      <section className="py-16 max-w-4xl mx-auto px-4 sm:px-6">
+        <div data-reveal className="bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 rounded-3xl p-6 sm:p-10 flex flex-col sm:flex-row items-center gap-7">
+          <div className="flex-shrink-0">
+            <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden bg-teal-500/15 border border-teal-500/25 flex items-center justify-center">
+              {/* Drop a photo of Steve at /steve.jpg and it replaces this icon automatically. */}
+              <img src="/steve.jpg" alt="Steve, owner of Mimico Bin Cleaning" loading="lazy"
+                className="absolute inset-0 z-10 w-full h-full object-cover"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+              <Heart size={40} className="text-teal-400" />
+            </div>
+          </div>
+          <div className="text-center sm:text-left">
+            <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-3 tracking-wide">
+              <Heart size={12} /> YOUR NEIGHBOUR, NOT A FRANCHISE
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black mb-3">Hi, I&apos;m Steve.</h2>
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl">
+              I live right here in Mimico. I started this because I got tired of the smell, the flies,
+              and the raccoons treating our street like a buffet. When you book, you text with me —
+              not a call centre. I show up Wednesday, do the job, send you a photo, and put your bins
+              back. That&apos;s it. Supporting a local family, one clean bin at a time.
+            </p>
           </div>
         </div>
       </section>

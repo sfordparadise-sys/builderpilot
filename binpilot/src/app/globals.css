@@ -41,6 +41,19 @@ body { background-color: #04080f; color: #eef4ff; }
 }
 .count-up { animation: countUp 0.4s ease-out forwards; }
 
+/* Scroll reveal — progressive enhancement. Only active once JS adds .js-reveal,
+   so content is fully visible if JS is slow or disabled (good for SEO + safety). */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(.16,.84,.44,1), transform 0.7s cubic-bezier(.16,.84,.44,1);
+  will-change: opacity, transform;
+}
+.js-reveal [data-reveal].in-view { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
