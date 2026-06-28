@@ -160,7 +160,7 @@ export default function BinPilotPage() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-20">
+      <section className="relative flex items-center justify-center overflow-hidden pt-16 pb-12 sm:pt-20">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-teal-500/10 rounded-full blur-[160px]" />
           <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-orange-500/8 rounded-full blur-[120px]" />
@@ -178,10 +178,9 @@ export default function BinPilotPage() {
             <span className="shimmer-text">toilet.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            And it sits right next to your home, your kids, and your dog.
-            We blast away the bacteria, the smell, the flies, and the raccoon buffet —
-            with a 200°F pressure wash, right at your curb. <strong className="text-white">You never touch it.</strong>
+          <p className="text-lg sm:text-xl text-slate-400 max-w-xl mx-auto mb-9 leading-relaxed">
+            A 200°F pressure wash at your curb — bacteria, smell and flies gone.
+            <strong className="text-white"> You never touch it.</strong>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-7">
@@ -200,10 +199,24 @@ export default function BinPilotPage() {
             </div>
           )}
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-slate-500">
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-slate-500">
             <div className="flex items-center gap-1.5"><ShieldCheck size={14} className="text-teal-400" /><span>200°F sanitizing wash</span></div>
-            <div className="flex items-center gap-1.5"><CheckCircle size={14} className="text-teal-400" /><span>No effort on your part. Zero.</span></div>
+            <div className="flex items-center gap-1.5"><CheckCircle size={14} className="text-teal-400" /><span>Zero effort on your part</span></div>
             <div className="flex items-center gap-1.5"><Heart size={14} className="text-teal-400" /><span>Local family — Steve lives here</span></div>
+          </div>
+
+          {/* Real before/after proof, right up top */}
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            {[
+              { src: '/photos/ba-1-blue-black.jpeg', cap: 'Recycling & garbage' },
+              { src: '/photos/ba-3-green.jpeg',      cap: 'Green bin' },
+            ].map((p) => (
+              <figure key={p.src} className="relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02]">
+                <img src={p.src} alt="A bin before and after a 200°F sanitizing clean" className="w-full h-full object-cover" />
+                <span className="absolute top-2.5 left-2.5 bg-[#04080f]/80 backdrop-blur-sm border border-white/15 text-white text-[9px] font-black tracking-widest px-2 py-1 rounded">BEFORE → AFTER</span>
+                <span className="absolute bottom-2.5 right-2.5 bg-[#04080f]/70 text-slate-200 text-[10px] font-bold px-2 py-0.5 rounded">{p.cap}</span>
+              </figure>
+            ))}
           </div>
         </div>
       </section>
@@ -596,15 +609,17 @@ export default function BinPilotPage() {
 
       {/* ── Meet Steve (local trust) ── */}
       <section className="py-16 max-w-4xl mx-auto px-4 sm:px-6">
-        <div data-reveal className="bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 rounded-3xl p-6 sm:p-10 flex flex-col sm:flex-row items-center gap-7">
-          <div className="flex-shrink-0">
-            <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden bg-teal-500/15 border border-teal-500/25 flex items-center justify-center">
-              {/* Drop a photo of Steve at /steve.jpg and it replaces this icon automatically. */}
+        <div data-reveal className="bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/20 rounded-3xl p-6 sm:p-10 flex flex-col sm:flex-row items-center sm:items-start gap-7">
+          <div className="flex-shrink-0 w-full sm:w-44 space-y-3">
+            <div className="relative w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-2xl overflow-hidden bg-teal-500/15 border border-teal-500/25 flex items-center justify-center">
               <img src="/steve.jpg" alt="Steve, owner of Mimico Bin Cleaning" loading="lazy"
                 className="absolute inset-0 z-10 w-full h-full object-cover"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
               <Heart size={40} className="text-teal-400" />
             </div>
+            <img src="/photos/steve-builder.jpeg" alt="Steve on a local build site" loading="lazy"
+              className="hidden sm:block w-44 h-28 object-cover rounded-xl border border-white/10"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
           </div>
           <div className="text-center sm:text-left">
             <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-3 tracking-wide">
@@ -612,11 +627,15 @@ export default function BinPilotPage() {
             </div>
             <h2 className="text-2xl sm:text-3xl font-black mb-3">Hi, I&apos;m Steve.</h2>
             <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl">
-              I live right here in Mimico. I started this because I got tired of the smell, the flies,
-              and the raccoons treating our street like a buffet. When you book, you text with me —
-              not a call centre. I show up Wednesday, do the job, send you a photo, and put your bins
-              back. That&apos;s it. Supporting a local family, one clean bin at a time.
+              One Saturday in 2021, our realtor told us to drive down Lake Shore and turn right
+              on any street past Hillside. We did — and fell in love on the spot. This is a
+              white-picket-fence kind of place: kids running around, neighbours having a drink
+              on the front lawn, weekend garage sales, and that legendary grilled-cheese challenge
+              every year. We couldn&apos;t be happier here. I want my kids growing up in the same
+              proper Canadian neighbourhood I did — so keeping our streets&apos; bins clean is my
+              way of looking after the place we love.
             </p>
+            <p className="mt-4 text-teal-400 font-bold text-sm">— Steve · Mimico, since 2021</p>
           </div>
         </div>
       </section>
