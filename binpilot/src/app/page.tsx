@@ -6,7 +6,7 @@ import {
   Trash2, CheckCircle, Phone, Mail, ChevronDown,
   Leaf, Menu, X, ArrowRight, AlertTriangle, Recycle,
   Calendar, MessageSquare, Camera, ShieldCheck,
-  Heart, Bug, Skull, Sparkles, Send, Star, ClipboardX, Zap,
+  Heart, Bug, Skull, Sparkles, Send, Star, Zap,
 } from 'lucide-react';
 
 function nextWednesday() {
@@ -26,12 +26,26 @@ export default function BinPilotPage() {
   const [serviceDate, setServiceDate] = useState('');
   const [showNotes, setShowNotes] = useState(false);
   const [spotsLeft] = useState(() => Math.floor(Math.random() * 3) + 2);
+  const [showPopup, setShowPopup] = useState(false);
   const [form, setForm] = useState({ name: '', address: '', phone: '', email: '', bins: [] as string[], plan: 'Monthly', notes: '' });
   const [fpState, fpSubmit] = useForm('xzdlepgr');
 
   useEffect(() => {
     setServiceDate(nextWednesday().toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric' }));
   }, []);
+
+  // Cute raccoon scarcity popup — pops up once per visit after a short delay.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try { if (sessionStorage.getItem('binpilot_popup_seen')) return; } catch {}
+    const t = setTimeout(() => setShowPopup(true), 6000);
+    return () => clearTimeout(t);
+  }, []);
+
+  function dismissPopup() {
+    setShowPopup(false);
+    try { sessionStorage.setItem('binpilot_popup_seen', '1'); } catch {}
+  }
 
   // Scroll-reveal: progressive enhancement. Adds .js-reveal so [data-reveal]
   // elements fade up as they enter the viewport; if JS never runs, content
@@ -52,7 +66,11 @@ export default function BinPilotPage() {
       { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
     els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    // Failsafe: never leave a section hidden if the observer doesn't fire.
+    const failsafe = setTimeout(() => {
+      document.querySelectorAll('[data-reveal]:not(.in-view)').forEach((e) => e.classList.add('in-view'));
+    }, 3500);
+    return () => { io.disconnect(); clearTimeout(failsafe); };
   }, []);
 
   const navLinks = [
@@ -66,10 +84,10 @@ export default function BinPilotPage() {
   const priceFor = (n: number) => n === 1 ? 25 : n === 2 ? 40 : n >= 3 ? 50 : 0;
 
   const threats = [
-    { icon: Skull,  label: 'E. coli & Salmonella',      desc: 'The bacteria behind food poisoning thrive in warm bin gunk. Your kids touch that lid.' },
-    { icon: Bug,    label: 'Flies, Maggots & Wasps',    desc: 'One forgotten chicken wrapper becomes a maggot nursery in 48 hours. We have seen it.' },
-    { icon: Trash2, label: 'Raccoons & Skunks',         desc: 'A stinky bin is a dinner bell. Once they find it, they tell their friends. All of them.' },
-    { icon: Heart,  label: 'Parked Next to Your Family', desc: 'That bin sits by your garage, your dog, your kids. What\'s in it is closer than you think.' },
+    { icon: Skull,  label: 'E. coli & Salmonella',      desc: 'Food-poisoning bacteria thrive in warm bin gunk — and your kids touch that lid.' },
+    { icon: Bug,    label: 'Flies, Maggots & Wasps',    desc: 'A forgotten wrapper becomes a maggot nursery in 48 hours.' },
+    { icon: Trash2, label: 'Raccoons & Skunks',         desc: 'A stinky bin is a dinner bell — and they tell their friends.' },
+    { icon: Heart,  label: 'Parked Next to Your Family', desc: 'It sits by your garage, your dog, your kids. Closer than you think.' },
   ];
 
   const testimonials = [
@@ -225,16 +243,15 @@ export default function BinPilotPage() {
       <section className="py-6 max-w-5xl mx-auto px-4 sm:px-6">
         <div className="bg-orange-950/40 border-2 border-orange-500/40 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
           <div className="flex-shrink-0">
-            <div className="w-14 h-14 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center">
-              <ClipboardX size={28} className="text-orange-400" />
-            </div>
+            <img src="/raccoons/inspector.png" alt="Cartoon raccoon inspector in a hi-vis vest" loading="lazy"
+              className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-xl bg-white/90 border border-orange-500/30" />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded tracking-widest">⚠ RACCOON INSPECTION FAILED</span>
             </div>
             <h3 className="font-black text-xl text-orange-300 mb-1">Property Address: <span className="text-white">Yours</span></h3>
-            <p className="text-orange-200/70 text-sm mb-3">Reason for failure: suspicious smell · excessive grime · fly traffic exceeds safe limits · green bin classified as biohazard</p>
+            <p className="text-orange-200/70 text-sm mb-3">Suspicious smell · excessive grime · fly traffic over the legal limit.</p>
             <div className="flex flex-wrap gap-3 text-sm">
               <span className="bg-teal-500/15 border border-teal-500/30 text-teal-400 px-3 py-1.5 rounded-lg font-semibold">✓ A cleaner neighbourhood</span>
               <span className="bg-teal-500/15 border border-teal-500/30 text-teal-400 px-3 py-1.5 rounded-lg font-semibold">✓ A happier you</span>
@@ -551,14 +568,14 @@ export default function BinPilotPage() {
             </div>
             <h2 className="text-3xl sm:text-4xl font-black mb-3">Three things you can&apos;t un-know</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-5 mb-10">
+          <div className="grid md:grid-cols-3 gap-5 mb-10" data-reveal>
             {[
-              { e: '🦝', title: 'Raccoon Therapist Report', body: 'Patient: Your Garbage Bin. Symptoms: smells terrible, attracts bad influences, hoards garbage, causes relationship problems with neighbours. Recommended treatment: professional cleaning, once monthly.' },
-              { e: '🚽', title: 'Grosser Than Your Toilet',  body: 'Studies show household garbage bins can carry more bacteria per square inch than a toilet seat. You clean one of those religiously. The other one — not so much. We can help.' },
-              { e: '🏆', title: 'Raccoons Have Standards',   body: 'Fun fact: raccoons have higher cleanliness standards than some homeowners. Even this guy thinks your bin is gross. Let\'s fix that.' },
+              { img: '/raccoons/therapist.png',  title: 'Therapist Report', body: 'Patient: your garbage bin. Smells terrible, attracts bad influences. Prescription: a monthly clean.' },
+              { img: '/raccoons/ewgross.png',     title: 'Grosser Than Your Toilet', body: 'A bin can hold more bacteria per inch than a toilet seat. You scrub one of those. Not the other.' },
+              { img: '/raccoons/sunglasses.png',  title: 'Even Raccoons Judge You', body: 'The local raccoons think your bin is gross. Let’s fix that.' },
             ].map(f => (
               <div key={f.title} className="bg-white/[0.03] border border-white/8 rounded-2xl p-6 hover:border-teal-500/20 transition-colors">
-                <span className="text-4xl block mb-4">{f.e}</span>
+                <img src={f.img} alt="" loading="lazy" className="w-20 h-20 object-cover rounded-xl bg-white/90 mb-4" />
                 <h3 className="font-black mb-2">{f.title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{f.body}</p>
               </div>
@@ -686,6 +703,26 @@ export default function BinPilotPage() {
           © {new Date().getFullYear()} BinPilot — Mimico Bin Cleaning. Local neighbour. Serving Mimico &amp; New Toronto.
         </div>
       </footer>
+
+      {/* ── Cute raccoon scarcity popup ── */}
+      {showPopup && (
+        <div className="fixed z-50 left-3 right-3 bottom-24 sm:left-6 sm:right-auto sm:bottom-6 sm:max-w-sm fade-in-up">
+          <div className="relative bg-[#0a1422] border border-teal-500/30 rounded-2xl shadow-2xl shadow-teal-500/10 p-4 flex items-center gap-3">
+            <button onClick={dismissPopup} aria-label="Close" className="absolute top-2 right-2 text-slate-500 hover:text-white transition-colors">
+              <X size={16} />
+            </button>
+            <img src="/raccoons/peek.png" alt="A raccoon peeking out of a bin" className="w-16 h-16 rounded-xl object-cover bg-white/90 flex-shrink-0" />
+            <div className="pr-4">
+              <p className="text-sm font-black text-white leading-snug">
+                Only <span className="text-orange-400">{spotsLeft} spots</span> left for Tuesday/Wednesday this week!
+              </p>
+              <a href="#book" onClick={dismissPopup} className="inline-flex items-center gap-1 mt-1.5 text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors">
+                Grab your spot <ArrowRight size={12} />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Sticky mobile CTA bar ── */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#04080f]/95 backdrop-blur-md border-t border-white/10 px-4 py-3 flex gap-3">
