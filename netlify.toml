@@ -1,0 +1,4 @@
+[build]
+  base = "binpilot"
+  command = "npm run build"
+  publish = "binpilot/out"
