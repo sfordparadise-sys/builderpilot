@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useForm } from '@formspree/react';
+import BinConfessional from '@/components/BinConfessional';
 import {
   Trash2, CheckCircle, Phone, Mail, ChevronDown,
   Leaf, Menu, X, ArrowRight, AlertTriangle, Recycle,
@@ -239,8 +240,13 @@ export default function BinPilotPage() {
         </div>
       </section>
 
+      {/* ── The Bin Confessional (interactive quiz funnel) ── */}
+      <div className="border-y border-white/5 bg-white/[0.01]">
+        <BinConfessional />
+      </div>
+
       {/* ── Raccoon Inspection Failed ── */}
-      <section className="py-6 max-w-5xl mx-auto px-4 sm:px-6">
+      <section className="py-6 max-w-5xl mx-auto px-4 sm:px-6 mt-8">
         <div className="bg-orange-950/40 border-2 border-orange-500/40 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
           <div className="flex-shrink-0">
             <img src="/raccoons/inspector.png" alt="Cartoon raccoon inspector in a hi-vis vest" loading="lazy"
