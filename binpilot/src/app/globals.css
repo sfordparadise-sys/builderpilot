@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html { scroll-behavior: smooth; }
-body { background-color: #04080f; color: #eef4ff; }
+body { background-color: #faf7f0; color: #1e293b; }
 
 @keyframes marquee {
   0% { transform: translateX(0); }
@@ -59,7 +59,7 @@ body { background-color: #04080f; color: #eef4ff; }
   100% { background-position: 200% center; }
 }
 .shimmer-text {
-  background: linear-gradient(90deg, #5eead4 0%, #ffffff 22%, #a5f3fc 48%, #c084fc 72%, #5eead4 100%);
+  background: linear-gradient(90deg, #0d9488 0%, #0f766e 22%, #ea580c 50%, #d97706 74%, #0d9488 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

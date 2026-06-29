@@ -97,21 +97,21 @@ export default function BinConfessional() {
     <section id="confessional" className="py-16 sm:py-20 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 text-orange-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
+          <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 text-orange-600 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide">
             <Sparkles size={12} /> THE BIN CONFESSIONAL
           </div>
           <h2 className="text-3xl sm:text-4xl font-black mb-2">What’s really living in your bin?</h2>
-          <p className="text-slate-400 text-sm">5 questions · 60 seconds · no email required</p>
+          <p className="text-slate-600 text-sm">5 questions · 60 seconds · no email required</p>
         </div>
 
-        <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 sm:p-8 min-h-[360px] flex flex-col">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 min-h-[360px] flex flex-col">
           {/* progress */}
           <div className="mb-6">
             <div className="flex justify-between text-xs text-slate-500 mb-2 font-semibold">
               <span>{done ? 'Verdict' : `Question ${step + 1} of ${QUESTIONS.length}`}</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-teal-500 to-orange-500 transition-all duration-500" style={{ width: `${progress}%` }} />
             </div>
           </div>
@@ -128,33 +128,33 @@ export default function BinConfessional() {
                     className={`w-full flex items-center gap-3 text-left px-4 py-3.5 rounded-xl border transition-all ${
                       picked === oi
                         ? 'bg-teal-500/20 border-teal-500/50'
-                        : 'bg-white/5 border-white/10 hover:border-teal-500/30 hover:bg-white/[0.07]'
+                        : 'bg-slate-100 border-slate-200 hover:border-teal-500/30 hover:bg-slate-100'
                     } ${picked !== null && picked !== oi ? 'opacity-40' : ''}`}
                   >
                     <span className="text-2xl flex-shrink-0">{o.e}</span>
-                    <span className="font-semibold text-sm text-slate-100">{o.t}</span>
+                    <span className="font-semibold text-sm text-slate-800">{o.t}</span>
                   </button>
                 ))}
               </div>
               <div className="h-6 mt-4 text-center">
-                {reaction && <p className="text-sm font-bold text-teal-400 fade-in-up">{reaction}</p>}
+                {reaction && <p className="text-sm font-bold text-teal-600 fade-in-up">{reaction}</p>}
               </div>
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center fade-in-up">
               <span className="text-5xl mb-3">{result.emoji}</span>
-              <p className="text-xs font-black text-orange-400 tracking-widest mb-1">YOUR VERDICT</p>
+              <p className="text-xs font-black text-orange-600 tracking-widest mb-1">YOUR VERDICT</p>
               <h3 className="text-2xl sm:text-3xl font-black mb-3">{result.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed max-w-md mb-7">{result.body}</p>
+              <p className="text-slate-600 text-sm leading-relaxed max-w-md mb-7">{result.body}</p>
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <a href="#book" className="glow-pulse-orange inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black px-7 py-3.5 rounded-xl transition-all">
                   Book My Clean — from $25 <ArrowRight size={16} />
                 </a>
-                <a href="sms:+15197293673&body=BIN CLEAN" className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold px-7 py-3.5 rounded-xl transition-colors">
+                <a href="sms:+15197293673&body=BIN CLEAN" className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-100 border border-slate-300 text-slate-900 font-bold px-7 py-3.5 rounded-xl transition-colors">
                   <Phone size={16} /> Text Steve
                 </a>
               </div>
-              <button onClick={restart} className="mt-5 inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+              <button onClick={restart} className="mt-5 inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors">
                 <RotateCcw size={12} /> Retake the confessional
               </button>
             </div>
